@@ -1,0 +1,103 @@
+name: 构建并发布
+
+# 正文一改就重新生成三种格式，并把整站发到 GitHub Pages。
+# 需要在仓库 Settings → Pages 里把 Source 设为 GitHub Actions（只需设一次）。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 中文字体：PDF 排版要用。缺了这步 build-pdf.py 会明确报错并提示装什么。
+      - name: 安装中文字体
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+
+      - name: 安装 reportlab
+        run: pip install --quiet reportlab
+
+      # 这一步会先跑一致性检查（网页解析器 vs 工具解析器），不一致直接失败，
+      # 避免发出「网页上和电子书里内容不一样」的版本。
+      - name: 生成全部格式
+        run: node tools/build-all.mjs
+
+      - name: 统计产物
+        run: ls -lh dist/
+
+      - name: 上传下载用的产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: 中国教师生活指南-全部格式
+          path: |
+            dist/中国教师生活指南.pdf
+            dist/中国教师生活指南.epub
+            dist/中国教师生活指南-离线版.html
+          if-no-files-found: error
+
+      # enablement: true —— 仓库还没开启 Pages 时自动开启（fork 之后不用手动去 Settings 里设）。
+      # 不加这一项时，configure-pages 在未开启 Pages 的仓库上会直接失败。
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      # 整理出一个干净的站点目录再发布：不要带 .git、tools/ 这些。
+      # 注意：页脚链接指向 SOURCES.md / LICENSE / skills/teacher-guide/README.md，
+      # 这几个必须一起发，否则线上是死链（这个坑踩过一次）。
+      - name: 整理站点目录
+        run: |
+          set -e
+          mkdir -p _site
+          cp index.html robots.txt .nojekyll README.md LICENSE SOURCES.md _site/
+          cp -r book dist skills _site/
+          # 自检：首页里 href="./xxx" 指向的本地路径必须都在站点目录里
+          links=$(grep -o 'href="\./[^"]*"' index.html | sed 's|href="\./||; s|"$||' | sort -u)
+          missing=""
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            [ -e "_site/$f" ] || missing="$missing $f"
+          done <<< "$links"
+          if [ -n "$missing" ]; then
+            echo "::error::站点缺少首页链接到的文件:$missing"
+            exit 1
+          fi
+          echo "首页本地链接自检通过（$(echo "$links" | wc -l) 个）"
+          echo "站点文件:"
+          find _site -type f | sort
+
+      - name: 打包站点
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

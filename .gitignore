@@ -1,0 +1,19 @@
+# 构建中间产物：每次构建都会重新生成，不进版本库
+dist/book.json
+
+# 本地预览临时文件
+__t.html
+__p.html
+_site/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# 依赖（本项目工具链不依赖任何 npm 包，留在这里以防万一）
+node_modules/
+__pycache__/
+*.pyc

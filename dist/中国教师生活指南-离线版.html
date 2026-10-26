@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中国教师生活指南 · 离线单文件版</title>
+<style>
+:root{
+  --bg:#ffffff; --bg-alt:#fafaf8; --bg-mute:#f4f4f1; --bg-soft:#fbfbf9;
+  --divider:#e7e6e0; --divider-soft:#f0efea;
+  --t1:#1f1f1e; --t2:rgba(31,31,30,.74); --t3:rgba(31,31,30,.5); --t4:rgba(31,31,30,.36);
+  --brand:#2f4bb0; --brand-2:#3a5ccc; --brand-soft:rgba(47,75,176,.07);
+  --A-tx:#166a44; --A-bg:rgba(16,185,129,.11); --A-bd:rgba(16,185,129,.28);
+  --B-tx:#2f4bb0; --B-bg:rgba(47,75,176,.09); --B-bd:rgba(47,75,176,.24);
+  --C-tx:#8a5320; --C-bg:rgba(234,179,8,.16); --C-bd:rgba(234,179,8,.4);
+  --D-tx:#5c6066; --D-bg:rgba(142,150,170,.13); --D-bd:rgba(142,150,170,.3);
+  --danger-tx:#b8272c; --danger-bg:rgba(244,63,94,.09); --danger-bd:rgba(244,63,94,.24);
+  --shadow:0 1px 2px rgba(0,0,0,.035), 0 1px 3px rgba(0,0,0,.05);
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --nav-h:58px; --side-w:296px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--t1);font:15px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--brand)}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
+
+/* ---------- 顶部 ---------- */
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--divider);z-index:40;
+  display:flex;align-items:center;gap:14px;padding:0 20px}
+.nav .brand{display:flex;align-items:baseline;gap:9px;flex:none}
+.nav .brand b{font-size:15px;font-weight:600}
+.nav .brand span{font-size:12px;color:var(--t4)}
+.nav .search{flex:1 1 auto;max-width:420px;margin-left:auto;position:relative}
+.nav .search input{width:100%;height:34px;padding:0 32px 0 32px;border:1px solid var(--divider);
+  border-radius:9px;background:var(--bg-soft);font:inherit;font-size:13.5px;color:var(--t1)}
+.nav .search input:focus{outline:none;border-color:var(--B-bd);background:#fff;box-shadow:0 0 0 3px var(--B-bg)}
+.nav .search .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:13px;pointer-events:none}
+.nav .search .clr{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:20px;height:20px;
+  border-radius:5px;border:0;background:transparent;color:var(--t4);cursor:pointer;font-size:14px;line-height:1;display:none}
+.nav .search.has .clr{display:block}
+.nav .search .clr:hover{background:var(--bg-mute);color:var(--t1)}
+.nav .toggle{display:none;width:34px;height:34px;border:1px solid var(--divider);border-radius:9px;
+  background:#fff;cursor:pointer;color:var(--t2);font-size:15px}
+#prog{position:fixed;top:var(--nav-h);left:0;height:2px;background:var(--brand-2);width:0;z-index:41;transition:width .1s linear}
+
+/* ---------- 侧栏 ---------- */
+.side{position:fixed;top:var(--nav-h);bottom:0;left:0;width:var(--side-w);background:var(--bg-alt);
+  border-right:1px solid var(--divider);overflow-y:auto;overscroll-behavior:contain;padding:16px 0 60px;z-index:30}
+.side::-webkit-scrollbar{width:9px}
+.side::-webkit-scrollbar-thumb{background:#dcdbd5;border-radius:9px;border:2px solid var(--bg-alt)}
+.grp{padding:0 14px;margin-bottom:18px}
+.grp:last-child{margin-bottom:0}
+.gt{font-size:11.5px;font-weight:600;color:var(--t4);letter-spacing:.06em;text-transform:uppercase;
+  padding:0 4px;margin-bottom:8px;display:flex;align-items:baseline;gap:6px}
+.gt small{font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--t4)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{cursor:pointer;user-select:none;font:inherit;font-size:12.5px;line-height:1.5;padding:3px 10px;
+  border-radius:7px;border:1px solid var(--divider);background:#fff;color:var(--t2);transition:.12s}
+.chip:hover{border-color:#cfcec7;color:var(--t1)}
+.chip[aria-pressed="true"]{background:var(--t1);color:#fff;border-color:var(--t1)}
+.chip[aria-pressed="true"].gA{background:var(--A-tx);border-color:var(--A-tx)}
+.chip[aria-pressed="true"].gB{background:var(--B-tx);border-color:var(--B-tx)}
+.chip[aria-pressed="true"].gC{background:var(--C-tx);border-color:var(--C-tx)}
+.chip[aria-pressed="true"].gD{background:var(--D-tx);border-color:var(--D-tx)}
+
+/* 目录 */
+.toc-list{display:flex;flex-direction:column;gap:1px}
+.toc-row{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;cursor:pointer;
+  border:0;background:transparent;font:inherit;text-align:left;width:100%;color:var(--t2);transition:.1s}
+.toc-row:hover{background:var(--bg-mute);color:var(--t1)}
+.toc-row .no{font-family:var(--mono);font-size:11px;color:var(--t4);flex:none;width:16px}
+.toc-row .tl{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toc-row .ct{font-size:11px;color:var(--t4);flex:none;font-variant-numeric:tabular-nums}
+.toc-row .cv{font-size:9px;color:var(--t4);flex:none;transition:transform .15s;margin-left:-2px}
+.toc-row.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.toc-row.on .tl,.toc-row.on .no,.toc-row.on .ct{color:var(--brand)}
+.toc-row.on .cv{transform:rotate(90deg)}
+.toc-row.dim{opacity:.32}
+.toc-sub{display:none;flex-direction:column;gap:0;padding:1px 0 5px 23px}
+.toc-sub.open{display:flex}
+.toc-sub a{display:block;font-size:12.5px;line-height:1.5;color:var(--t3);text-decoration:none;
+  padding:3px 8px;border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  border-left:1.5px solid transparent;cursor:pointer}
+.toc-sub a:hover{color:var(--t1);background:var(--bg-mute)}
+.toc-sub a.on{color:var(--brand);border-left-color:var(--brand);background:var(--brand-soft);font-weight:500}
+.toc-empty{font-size:12.5px;color:var(--t4);padding:5px 8px}
+
+/* 快捷 */
+.pre{display:flex;flex-direction:column;gap:4px}
+.pre button{cursor:pointer;font:inherit;font-size:12.5px;text-align:left;padding:5px 9px;border-radius:7px;
+  border:1px dashed var(--divider);background:transparent;color:var(--t2)}
+.pre button:hover{border-style:solid;border-color:#cfcec7;color:var(--t1);background:#fff}
+.pre button.on{border-style:solid;border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:500}
+.rst{cursor:pointer;font:inherit;font-size:12.5px;color:var(--t4);background:none;border:0;padding:2px 4px;
+  text-decoration:underline;text-align:left}
+.rst:hover{color:var(--t1)}
+
+/* ---------- 正文 ---------- */
+.content{margin-left:var(--side-w);padding:var(--nav-h) 0 0}
+.doc{max-width:770px;margin:0 auto;padding:34px 40px 120px}
+
+.doc-head h1{font-size:27px;line-height:1.35;margin-bottom:12px}
+.doc-head .lede{font-size:15px;color:var(--t2);line-height:1.75;margin:0 0 10px}
+.doc-head .lede b{color:var(--t1);font-weight:600}
+.meta{display:flex;flex-wrap:wrap;gap:0;align-items:center;margin:18px 0 0;
+  padding:12px 0;border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)}
+.meta div{padding-right:16px;margin-right:16px;border-right:1px solid var(--divider-soft);line-height:1.3}
+.meta div:last-child{border-right:0;margin-right:0;padding-right:0}
+.meta b{display:block;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.meta span{font-size:11.5px;color:var(--t4)}
+.stat-live{font-size:13px;color:var(--t3);margin:16px 0 0;display:none}
+.stat-live.show{display:block}
+.stat-live b{color:var(--t1)}
+
+/* 其他格式下载 */
+.dl{display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;margin:16px 0 0;
+  padding-top:14px;border-top:1px solid var(--divider-soft)}
+.dl-t{font-size:11.5px;font-weight:600;color:var(--t4);letter-spacing:.06em;align-self:center;
+  padding-right:4px;text-transform:uppercase}
+.dl a{display:block;font-size:13px;font-weight:600;color:var(--t1);text-decoration:none;
+  border:1px solid var(--divider);border-radius:9px;padding:6px 12px;background:#fff;line-height:1.45}
+.dl a:hover{border-color:var(--B-bd);background:var(--brand-soft);color:var(--brand)}
+.dl a b{display:block;font-size:11.5px;font-weight:400;color:var(--t4)}
+.dl a:hover b{color:var(--brand)}
+.dl-note{font-size:12.5px;line-height:1.75;color:var(--t3);display:block;padding:1px 0}
+
+/* 节 */
+.sec{padding-top:38px;scroll-margin-top:calc(var(--nav-h) + 14px)}
+.sec:first-of-type{padding-top:26px}
+.sec-h{display:flex;align-items:baseline;gap:10px;padding-bottom:9px;border-bottom:2px solid var(--t1)}
+.sec-h .no{font-family:var(--mono);font-size:12.5px;color:var(--t4);flex:none}
+.sec-h h2{font-size:19px;flex:1;min-width:0}
+.sec-h .n{font-size:12px;color:var(--t4);flex:none;font-variant-numeric:tabular-nums}
+.sec-h .seg{font-size:11.5px;flex:none;color:var(--t3);background:var(--bg-mute);border:1px solid var(--divider);border-radius:999px;padding:1px 9px}
+.sec-pre{font-size:13.5px;color:var(--t3);line-height:1.7;margin:11px 0 0}
+.sec-pre p{margin:0 0 7px}
+.sec-pre p:last-child{margin-bottom:0}
+.sec-pre .lens{display:inline-block;font-size:12px;color:var(--t3);background:var(--bg-mute);
+  border:1px solid var(--divider);border-radius:6px;padding:1px 8px;margin-right:7px}
+.sec-pre b{color:var(--t2);font-weight:600}
+
+/* 条目 */
+.ent{padding:20px 0 4px;border-bottom:1px solid var(--divider-soft);scroll-margin-top:calc(var(--nav-h) + 14px)}
+.ent:last-child{border-bottom:0}
+.ent.hi{background:var(--brand-soft);border-radius:10px;margin:0 -14px;padding-left:14px;padding-right:14px;
+  box-shadow:0 0 0 1px var(--B-bd)}
+.ent-h{display:flex;gap:9px;align-items:baseline;margin-bottom:7px}
+.ent-no{font-family:var(--mono);font-size:11.5px;color:var(--t4);flex:none;padding-top:3px;letter-spacing:-.02em}
+.ent-t{font-size:16px;line-height:1.55;flex:1;min-width:0}
+.ent-tag{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 10px;padding-left:26px}
+.tg{font-size:11.5px;line-height:1.5;padding:1.5px 8px;border-radius:6px;white-space:nowrap;
+  font-variant-numeric:tabular-nums;border:1px solid transparent}
+.tgA{background:var(--A-bg);color:var(--A-tx);border-color:var(--A-bd);font-weight:600}
+.tgB{background:var(--B-bg);color:var(--B-tx);border-color:var(--B-bd);font-weight:600}
+.tgC{background:var(--C-bg);color:var(--C-tx);border-color:var(--C-bd);font-weight:600}
+.tgD{background:var(--D-bg);color:var(--D-tx);border-color:var(--D-bd);font-weight:600}
+.tgx{background:transparent;color:var(--t4);border-color:var(--divider);font-family:var(--mono);font-size:11px}
+.ent-plain{font-size:15px;line-height:1.78;color:var(--t1);margin:0 0 0 26px;padding:2px 0 2px 14px;
+  border-left:2px solid var(--divider)}
+.ent-plain strong{font-weight:600}
+.ent-btn{cursor:pointer;font:inherit;font-size:12.5px;color:var(--brand);background:none;border:0;
+  padding:0;margin:10px 0 0 26px;display:inline-block}
+.ent-btn:hover{text-decoration:underline}
+.ent-body{display:none}
+.ent.open .ent-body{display:block}
+.fld{margin:0 0 11px 26px;font-size:14px;line-height:1.75}
+.fld:first-child{margin-top:12px}
+.fld .k{display:inline-block;font-size:11.5px;font-weight:600;color:var(--t3);background:var(--bg-mute);
+  border-radius:5px;padding:1px 7px;margin-right:8px;vertical-align:1.5px;white-space:nowrap}
+.fld .v{color:var(--t2)}
+.fld .v strong{color:var(--t1);font-weight:600}
+.fld.path .k{background:var(--B-bg);color:var(--B-tx)}
+.fld.path .v{color:var(--t1)}
+.fld.note .k{background:transparent;border:1px solid var(--divider);color:var(--t4)}
+.fld.src .k{background:transparent;border:1px solid var(--divider);color:var(--t4)}
+.fld.src .v{font-size:12.5px;line-height:1.7;color:var(--t3);word-break:break-all}
+.fld.src a{text-decoration:none;border-bottom:1px solid var(--B-bd)}
+details.src-fold>summary{cursor:pointer;font-size:12px;color:var(--t4);list-style:none;display:inline-block;
+  margin:0 0 0 26px;padding:1px 0}
+details.src-fold>summary::-webkit-details-marker{display:none}
+details.src-fold>summary:hover{color:var(--brand)}
+details.src-fold>summary::before{content:"▸ ";font-size:10px}
+details.src-fold[open]>summary::before{content:"▾ "}
+details.src-fold>summary .k{display:inline-block;font-size:11.5px;font-weight:600;color:var(--t4);
+  border:1px solid var(--divider);border-radius:5px;padding:1px 7px;margin-right:6px}
+details.src-fold[open]>summary{margin-bottom:6px}
+
+.reflink{color:var(--brand);text-decoration:none;border-bottom:1px dashed var(--B-bd);cursor:pointer;white-space:nowrap}
+.reflink:hover{background:var(--brand-soft)}
+.refext{color:var(--t4);font-size:13px;border-bottom:1px dotted var(--divider);white-space:nowrap}
+
+/* 状态 */
+.status{text-align:center;color:var(--t4);font-size:13.5px;padding:70px 0}
+.bar{width:180px;height:3px;background:var(--bg-mute);border-radius:9px;margin:12px auto 0;overflow:hidden}
+.bar i{display:block;height:100%;width:30%;background:var(--brand-2);border-radius:9px;
+  animation:sk 1.1s ease-in-out infinite}
+@keyframes sk{0%{transform:translateX(-110%)}100%{transform:translateX(360%)}}
+.empty{text-align:center;color:var(--t3);padding:70px 20px;font-size:14px;line-height:1.9}
+.empty button{margin-top:14px;cursor:pointer;font:inherit;font-size:13px;padding:6px 14px;border-radius:8px;
+  border:1px solid var(--divider);background:#fff;color:var(--t1)}
+.empty button:hover{border-color:#cfcec7}
+code{font-family:var(--mono);font-size:.88em;background:var(--bg-mute);padding:1px 5px;border-radius:4px}
+.warn{background:var(--danger-bg);border:1px solid var(--danger-bd);color:var(--danger-tx);
+  border-radius:10px;padding:12px 16px;font-size:13.5px;line-height:1.8;margin-bottom:6px}
+.warn b{font-weight:600}
+.foot{margin-top:52px;padding-top:20px;border-top:1px solid var(--divider);font-size:12.5px;
+  line-height:1.9;color:var(--t3)}
+.foot b{color:var(--t2);font-weight:600}
+
+#top{position:fixed;right:24px;bottom:24px;width:38px;height:38px;border-radius:10px;border:1px solid var(--divider);
+  background:#fff;box-shadow:var(--shadow);cursor:pointer;color:var(--t2);font-size:15px;display:none;z-index:35}
+#top.show{display:block}
+#top:hover{color:var(--brand);border-color:var(--B-bd)}
+#mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:29}
+
+@media (max-width:1000px){
+  :root{--side-w:0px}
+  .nav .toggle{display:block;order:-1}
+  .side{width:290px;transform:translateX(-100%);transition:transform .22s ease;box-shadow:none}
+  .side.open{transform:none;box-shadow:0 8px 40px rgba(0,0,0,.16)}
+  .side.open~#mask{display:block}
+  .content{margin-left:0}
+  .doc{padding:26px 20px 100px}
+  .nav{padding:0 14px;gap:10px}
+  .nav .search{max-width:none}
+  .nav .brand span{display:none}
+  .ent.hi{margin:0 -8px;padding-left:8px;padding-right:8px}
+}
+@media (max-width:520px){
+  .doc-head h1{font-size:22px}
+  .ent-t{font-size:15px}
+  .ent-plain{margin-left:0;padding-left:11px}
+  .ent-tag{padding-left:0}
+  .fld,details.src-fold>summary,.ent-btn{margin-left:0}
+  .meta div{padding-right:11px;margin-right:11px}
+}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button class="toggle" id="toggle" aria-label="目录与筛选">☰</button>
+  <div class="brand"><b>中国教师生活指南</b><span>从小学到大学，教师的处境、应对与出路</span></div>
+  <div class="search" id="searchwrap">
+    <span class="ico">⌕</span>
+    <input id="q" type="search" placeholder="搜条目：家长投诉、非升即走、结节、职称、12356、AI…" autocomplete="off" aria-label="搜索条目">
+    <button class="clr" id="qclr" aria-label="清空">✕</button>
+  </div>
+</div>
+<div id="prog"></div>
+
+<aside class="side" id="side">
+  <div class="grp">
+    <div class="gt">目录 <small id="toc-hint">点击进入，滚到哪高亮哪</small></div>
+    <nav class="toc-list" id="toc"></nav>
+  </div>
+  <div class="grp">
+    <div class="gt">快捷入口</div>
+    <div class="pre" id="presets">
+      <button data-p="free">不花钱、也不要毅力的</button>
+      <button data-p="hard">只看证据最硬的（A）</button>
+      <button data-p="edge">只看证据边界（D）</button>
+      <button data-p="law">只看法律与权益</button>
+      <button class="rst" id="rst">清空全部条件</button>
+    </div>
+  </div>
+  <div class="grp">
+    <div class="gt">你的学段 <small>会连同全程适用的章节一起显示</small></div>
+    <div class="chips" id="fseg"></div>
+  </div>
+  <div class="grp">
+    <div class="gt">证据等级 <small>A 硬证据 · D 无直接证据</small></div>
+    <div class="chips" id="fgrade"></div>
+  </div>
+  <div class="grp">
+    <div class="gt">花钱</div>
+    <div class="chips" id="fmoney"></div>
+  </div>
+  <div class="grp">
+    <div class="gt">花时间</div>
+    <div class="chips" id="ftime"></div>
+  </div>
+  <div class="grp">
+    <div class="gt">要毅力</div>
+    <div class="chips" id="fgrit"></div>
+  </div>
+  <div class="grp">
+    <div class="gt">收益</div>
+    <div class="chips" id="fben"></div>
+  </div>
+  <div class="grp">
+    <div class="gt">换回什么 <small>口径，不跨口径比较</small></div>
+    <div class="chips" id="fkou"></div>
+  </div>
+</aside>
+<div id="mask"></div>
+
+<main class="content">
+<div class="doc">
+
+  <div class="doc-head">
+    <h1>中国教师生活指南</h1>
+    <p class="lede">写给从小学到大学的教师。每一条都回答两个问题：<b>这事有多普遍，我能做什么。</b></p>
+    <p class="lede">一共 <b>12 节 84 条</b>，覆盖身心健康、时间与非教学负担、学生安全与惩戒边界、家长投诉与不实举报、升学评价压力、高校非升即走、职称晋升、平台不足、工资与维权，以及<b>用 AI 提升职业竞争力</b>。</p>
+    <p class="lede">它和一般「教师减压文章」最大的区别是：<b>每个数字都标了出处，每条都给了证据等级。</b>找不到直接证据的条目一律标 D，并在备注里写明为什么只到 D——全书这样的条目有 15 条。这不是谦虚，是因为「该怎么办」这类问题大多没有对照研究，假装有依据反而会害人。别把 D 级当成警告，它只是诚实。</p>
+    <p class="lede">左侧目录按章节列出，并标注了<b>适用学段</b>。先用「你的学段」筛一次，再从「只看证据最硬的」开始读。</p>
+    <div class="meta" id="meta"></div>
+    <div class="dl" id="dl">
+      <span class="dl-t">其他格式</span>
+      <span class="dl-note">PDF（A4，带目录页码与书签）和 EPUB（电子书，可发到 Kindle）在项目 <code>dist/</code> 目录里。你手上这个文件本身已经是最全的一份——正文、检索、筛选都在里面。数据来源清单见 <code>SOURCES.md</code>。</span>
+    </div>
+    <p class="stat-live" id="live"></p>
+  </div>
+
+  <div class="status" id="status"><span>正在读取正文…</span><div class="bar"><i></i></div></div>
+  <div class="empty" id="empty" hidden>
+    没有符合条件的条目。去掉一个条件，或者换个更短的关键词。
+    <div><button id="reset2">清空全部条件</button></div>
+  </div>
+  <div id="list"></div>
+
+  <div class="foot">
+    <b>怎么读。</b>不必通读。左侧先用「你的学段」筛一次——标着「全学段」的章节在任何学段下都会保留，因为它们对小学和大学同样适用。然后按需要挑：想先保命，从第 2、3 节读；想先省时间，从第 4 节读；想做职业规划，第 7 到 10 节是按学段分开的。
+    <br><b>字段说明。</b>「成本」按钱、时间、毅力三个维度给，条目标签里的 <code>钱=0 时间=少 毅力=否</code> 就是这三项；「说人话」把「收益」里的研究口径翻成日常说法，只用「收益」栏已有的内容，不添新数字；证据等级 <b>A</b> = 有具体数字且来自随机试验、荟萃分析或官方文件，<b>B</b> = 有具体数字但来自观察性研究或官方统计，<b>C</b> = 有明文规定或公开数据但没有量化效果，<b>D</b> = 没有直接证据、来自明文规定或公开共识，并写明为什么只到 D。
+    <br><b>关于 D 级。</b>这本书有 15 条 D 级（占 18%）。这不是偷懒——「被家长投诉了怎么办」「平台不足该怎么选方向」这类问题不会有随机对照试验，硬标成 A 级才是害人。每条 D 级都在备注里写明了哪一半有出处、哪一半是作者的判断，请按这个结构读。
+    <br><b>数据来源。</b>全书引用 <b>38 个可查的来源链接</b>，覆盖 84 条中的 64 条；其余条目依据的是法规条文（如《教师法》《中小学教育惩戒规则（试行）》原文），条文本身即出处。完整的来源清单见 <a href="./SOURCES.md">SOURCES.md</a>。
+    <br><b>体例来源与许可。</b>本书的条目模板（成本／说人话／收益／证据等级／来源／备注）与证据等级体系，借鉴自 <a href="https://github.com/eternity4719/HowToLiveBetter" target="_blank" rel="noopener">eternity4719《高性价比人生指南》</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）。<b>本书正文为独立撰写，与该作品的内容没有引用关系。</b>本书同样以 CC BY 4.0 发布，完整许可文本见 <a href="./LICENSE">LICENSE</a>。
+    <br><b>免责。</b>这是一份科普性的信息整理，<b>不是法律意见、医疗建议或官方口径</b>。文中涉及的法律法规、政策数字、比例、时限均可能随时间和地区变化，引用前请以官方最新文件为准。凡标注「草案」的均为未生效文本，不得当作现行规定使用。涉及心理危机的内容不能替代专业诊疗——有立即危险时请拨打 120 或 110，心理支持请拨 12356。
+    <br><b>让 AI 照这本书回答。</b>仓库里带了一个 skill（<code>skills/teacher-guide</code>），Claude Code 和 Codex 都能装。装上以后直接问「被家长投诉了怎么办」「小学老师评高级有多难」，它会先把相关条目从 <code>book/</code> 里查出来再答，并注明出自第几节第几条，看到 D 级会主动说明证据不足。装法见 <a href="./skills/teacher-guide/README.md">那个目录的说明</a>。
+    <br><b>你手上的这一份是离线单文件版（12 节 84 条），正文已整本内嵌，双击就能开、不用联网、可以直接在微信里传。</b>它是快照，不会随正文更新——要拿最新版，回项目目录跑 <code>node tools/build-all.mjs</code> 重新生成。
+  </div>
+</div>
+</main>
+
+<button id="top" aria-label="回到顶部">↑</button>
+
+<script>
+/* 离线版内嵌正文：12 节 84 条 */
+const EMBEDDED_BOOK = {"01-先看几组数字.md":"# 第 1 节 先看几组数字：这个职业的真实处境\n\n**口径**：职业发展／身体健康／心理与情绪\n\n这一节不给你建议，只给你数字。之所以放在最前面，是因为后面每一节都在讲「怎么办」，而**在知道自己的处境有多普遍之前，「怎么办」是听不进去的**——很多人以为那些撑不住的夜里是自己不够坚强，其实不是。\n\n所有数字都标了出处，可查。查不到的，我们不写。\n\n> **如果你读完这些数字觉得更糟了，先别往下读。** 请直接翻到**第 3 节第 2 条**——那里有一个可以先打过去的电话（12356，全国统一心理援助热线，匿名，不需要报单位和姓名）。如果是有立即危险的情况，打 120 或 110。这一页的数字是给旁观者理解处境的，不是给当事人用来加重的负担的。\n\n---\n\n### 1. 先接受一个事实：教师心理问题的总检出率是 17.5%\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=心理 -->\n\n- 成本：不花钱。读完这一段的时间。\n- 说人话：研究者把 2000 到 2022 年间 1096 项针对中国教师的研究合在一起算，得出「每 100 名教师里约有 17.5 人存在可被检出的心理健康问题」——注意这是**检出率**，不是确诊率，也不是「17.5% 的人有病」。它是照 CT 照出来的影子，不是判决书。真正要紧的是下一句：这个趋势从 1998 年到 2020 年在缓慢上升。\n- 收益：俞国良团队对 2000—2022 年教师心理健康研究的元分析，检索文献 60537 篇，1096 篇纳入效应量分析，被试总人数 573609 名（幼儿教师 144 篇／51352 人；小学教师 285 篇／194153 人；中学教师 381 篇／201784 人；大学教师 286 篇／126320 人）。排除检出率较低的幼儿教师后，大中小学教师群体心理健康问题总检出率为 17.5%。\n- 证据等级：A\n- 来源：俞国良. 新世纪以来我国教师心理健康问题：检出率分析与应对[J]. 北京师范大学学报（社会科学版），2025(1): 73-84. <https://wkxb.bnu.edu.cn/CN/Y2025/V0/I1/73>\n- 备注：给 A 是因为这是目前覆盖样本最大的元分析（57 万人），且发表在正式学术期刊上。但要提醒两点：一是**元分析测的指标取决于各原始研究用了什么量表，不同量表算出的检出率不可直接比较**；二是作者自己在结论里也提到，测量工具和检出标准不统一是很大干扰。所以这个 17.5% 用来回答「这事普不普遍」是可靠的，用来回答「我有百分之多少的概率」是不可靠的。\n\n### 2. 中学教师抑郁检出率 23.4%、焦虑 21.8%——这是全学段最高的一段\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=心理 -->\n\n- 成本：不花钱。\n- 说人话：如果你在初中或高中，那么差不多每四个同事里就有一个处在抑郁症状能被检出的状态。这不是因为中学老师心理素质差，而是因为中学叠了最多重压力：升学指标、青春期学生、家长的高期待、以及最长的在校时间。\n- 收益：同一项元分析显示，中学教师抑郁症状检出率 23.4%，焦虑症状检出率 21.8%，在大中小学各学段中最高。\n- 证据等级：A\n- 来源：同本节第 1 条；另见《大中小学教师群体的心理健康问题总检出率为 17.5%！教师「心病」为哪般？》引述该研究。<https://new.qq.com/rain/a/20250227A04LCU00>\n- 备注：为什么把这一条单独拎出来：**学段差异是这份指南后面所有建议的分岔点**。同一套办法不适用于所有学段——小学教师的突出问题是强迫与躯体化，中学是睡眠问题，大学同样是睡眠问题加焦虑。用别人的药治自己的病，是这一行常见的无效努力。\n\n### 3. 不同学段的「痛」不一样：先认清你属于哪一段\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=心理 -->\n\n- 成本：不花钱。看一张表的时间。\n- 说人话：同一项研究给了每个学段最突出的问题清单。幼儿教师是抑郁、强迫、焦虑；小学教师是强迫、抑郁、躯体化、焦虑；中学教师是**睡眠问题排第一**，然后是强迫、抑郁；大学教师是睡眠问题、强迫、抑郁、焦虑。所以如果你是中学或大学老师，最先该管的是睡眠，不是情绪。\n- 收益：元分析给出的各学段突出心理问题（按检出率由高到低）：幼儿教师——抑郁、强迫、焦虑、躯体化、敌对、偏执；小学教师——强迫、抑郁、躯体化、焦虑、敌对、偏执；中学教师——睡眠问题、强迫、抑郁、焦虑、偏执、敌对、躯体化；大学教师——睡眠问题、强迫、抑郁、焦虑、躯体化、偏执、敌对。幼儿教师的抑郁检出率为 11.2%、强迫 9.3%、焦虑 8.2%、躯体化 6.6%、敌对 6.4%、偏执 5.7%。\n- 证据等级：A\n- 来源：同本节第 1 条。\n- 备注：这一条是全书最实用的一条之一——**它把「我该先管什么」这个问题变成了可查表的问题**。给 A 是因为数据来自同一份大样本元分析。注意幼儿教师的细分数字和中小学的排序来自同一研究的不同表格，粒度不同，别横向相减。\n\n### 4. 中小学教师周均工作约 60 小时，是法定工作时间的 1.5 倍\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=时间 -->\n\n- 成本：不花钱。\n- 说人话：法定每周工作 40 小时。教育部自己的调研发现，中小学教师平均每周干 60 小时。这不是「感觉累」，是算出来的。剩下的细节更值得看：**近三分之一的教师每天在校工作 10 小时以上，寄宿制学校部分教师在校时间超过 15 小时**；五成多教师每天下班后在家还要工作 2 小时以上；近六成教师周末用于工作的时间超过 3 小时。\n- 收益：教育部成立调研工作小组，分赴东中西部 9 省 18 市实地调研，召开座谈会 18 场次、访谈教师约 400 名；同时对 28 个省份的 250 个县市、1430 所学校的中小学教师进行问卷调研。调研结论：中小学教师周平均工作时间约为 60 小时，是法定工作时间的 1.5 倍；近 1/3 的教师每天在校工作 10 小时以上，寄宿制学校部分教师在校工作时间达到 15 个小时以上；五成多教师每天下班后在家工作 2 小时以上，近六成教师周末用于工作的时间超过 3 小时。\n- 证据等级：A\n- 来源：教育部《用制度为教师减负》（含教育部教师工作司负责人就中办、国办《关于减轻中小学教师负担进一步营造教育教学良好环境的若干意见》的说明）。<https://www.moe.gov.cn/jyb_xwfb/moe_2082/zl_2020n/2020_zl45/mtbd/202008/t20200826_480290.html>\n- 备注：给 A 是因为这是教育部自己的官方调研数据、样本覆盖 28 个省份 1430 所学校。要说明的是这轮调研发生在 2019—2020 年前后，**这几年「双减」和课后服务落地后工作时长很可能是变化的（大概率更长），但目前没有同等权威的新数据**，所以引用时请连同时间一起说，不要当成 2026 年的现状。\n\n### 5. 每周约 10 小时花在「非教育教学」上——这才是「累」的主要来源\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=时间 -->\n\n- 成本：不花钱。\n- 说人话：把「累了」拆开看，你会发现大部分不是上课累的。全国 24 万多名中小学教师的调查显示：义务教育阶段教师**每周在非教育教学活动上花 10.29 小时**，高中教师 11.22 小时，**班主任 12.30 小时**。也就是说，班主任每周的工作量里，有整整一天半在做跟教书无关的事。\n- 收益：北京师范大学中国教育与社会发展研究院蒋艳双等人，基于全国 24 万多名中小学教师的调查数据研究发现：义务教育阶段教师每周在非教育教学活动上的工作时间为 10.29 小时，高中教师 11.22 小时；额外担负班级管理事务的班主任，非教育教学工作总时间平均为 12.30 小时。该研究发表于《中小学管理》2025 年第 4 期。\n- 证据等级：A\n- 来源：中国青年网《教育教学工作之外，老师们的时间都去哪了》引述该研究。<https://news.youth.cn/jsxw/202511/t20251111_16343462.htm>\n- 备注：给 A 是因为样本量极大（24 万余人）且为学术期刊发表。这条数字的最大价值是**它给出了一个可用来跟学校谈判的具体量**：你要申请减免某项事务性工作时，「我这周已经花了 12 小时在非教学事务上」比「我很忙」有用得多。\n\n### 6. 教师体检报告上出镜率最高的四项\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=健康 -->\n\n- 成本：不花钱。\n- 说人话：一家每年做近 2 万人次教师体检的医院统计出的结果是：**乳腺小叶增生 70.7%、慢性咽炎 61.64%、血脂异常 56.96%、甲状腺结节 38.86%**。男女差别也很清楚——男性教师检出率较高的是血脂异常、肥胖或超重、咽炎；女性教师是乳腺小叶增生、乳腺结节、咽炎、甲状腺结节。\n- 收益：长沙市中心医院（南华大学附属长沙中心医院）健康管理中心整理的近年教师群体体检数据（每年教师体检人次近 2 万，含教师资格、入职及年度健康体检）。体检报告中「出镜率」较高的疾病为：乳腺小叶增生、乳腺结节（BI-RADS 0-3 级）、血脂异常、咽炎、甲状腺结节、肥胖或超重、肺结节（Lung-RADS 2 级）、痔疮、近视、正常高值血压。其中乳腺小叶增生 70.7%、慢性咽炎 61.64%、血脂异常 56.96%、甲状腺结节 38.86%。\n- 证据等级：B\n- 来源：长沙晚报《体检统计发现：四类疾病在教师队伍中占比高，医生建议这样做》。<https://so.icswb.com/h/204/20240910/888520.html>\n- 备注：给 B 而不是 A 的原因：这是一家医院对本院体检人群的统计，**不是随机抽样、不覆盖全国、存在明显的选择偏倚**（来体检的本来就是特定人群），而且「出镜率」是把不同性质的指标混在一起排的。它的价值是告诉你「该重点看哪几项」，不是告诉你「教师的患病率是多少」。这一点很重要——网上大量文章把这几个数字当成「教师患病率」引用，那是误用。\n\n### 7. 这些数字不是让你绝望，是为了让你知道这不是你一个人的问题\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=心理 -->\n\n- 成本：不花钱。\n- 说人话：知道「17.5%」「60 小时」这类数字，真正的用处不是吓自己，而是**换掉一个错误的归因**。很多教师把撑不住理解成「我不行」「我不适合这行」，而数据说的是：这是一套结构性的压力作用在一个人身上的正常结果。归因错了，解药就会吃错——你会去买「抗压能力培训」，而真正该做的是把每周那 10 小时非教学事务退回去。\n- 收益：有一项基于问卷的调查给出了教师自己对负担来源的判断：在「教师负担过重的原因」中，60.4% 的教师选择「教师职责边界不清」，是占比最高的原因；其次是行政管理干预。\n- 证据等级：D\n- 来源：中国教科院职业教育与继续教育研究所尹玉辉等人「课后服务与教师负担情况调查」，见中国青年网引述。<https://news.youth.cn/jsxw/202511/t20251111_16343462.htm>（60.4% 一项为调查数据，可作为 B 级参考；本条「归因决定解药」这一主张本身没有直接研究支持，故标 D）\n- 备注：给 D 的原因：这一条的后半句（「归因错了就会吃错药」）是一个判断，不是研究结论——没有随机试验能证明「把压力归因于结构」比「归因于自己」更有利于健康。但前面那 60.4% 是实打实的调查数据。**本书的规矩是：一条里有两层不同强度的内容时，如实标出来，不为了好看整体升格。**\n","02-身体上的信号.md":"# 第 2 节 身体上的信号：被当成「职业正常现象」的那些\n\n**口径**：身体健康\n\n这一节要解决一个很具体的问题：**教师群体的很多症状，被自己和同事默认为「这行的正常现象」**——嗓子哑是正常的，脖子紧是正常的，失眠是正常的。一旦被归为正常，就不会去查；不去查，就会错过可以处理的阶段。\n\n先纠正一个流传很广的误解：慢性咽炎、下肢静脉曲张、颈椎病**都不是法定职业病**，不能按职业病申请待遇。原因见本节第 7 条。这不影响它们值得处理，只影响你走哪条路。\n\n---\n\n### 1. 甲状腺结节 38.86%——先说清楚：绝大多数不用处理\n\n<!-- 成本标签: 钱=少 时间=少 毅力=否 收益=大 口径=健康 -->\n\n- 成本：一次甲状腺超声检查。多数地区体检包含，约 100 到 200 元。\n- 说人话：体检报告上写「甲状腺结节」的人很多，看到这四个字先别慌。**绝大多数是良性的**，恶性结节占比在 8% 到 16% 之间——也就是说十个有结节的人里，八九个不需要治疗，只需要每年复查一次。真正要处理的是另外那一两个，而它们恰恰只有复查才能早发现。\n- 收益：长沙市中心医院健康管理中心对近年教师体检数据的统计显示，甲状腺结节在教师体检中检出率为 38.86%；该院健康管理中心副主任王晓华介绍，甲状腺结节多数是良性，**恶性结节占比为 8%—16%**，女性患病率是男性的 3.83 倍，有放射暴露史和甲状腺结节家族史的人群发病率更高。\n- 证据等级：A\n- 来源：长沙晚报《体检统计发现：四类疾病在教师队伍中占比高，医生建议这样做》。<https://so.icswb.com/h/204/20240910/888520.html>\n- 备注：给 A 是因为「恶性占比 8%—16%」这一比例在临床上有共识、且由三甲医院健康管理中心明确给出。要区分开：**检出率 38.86% 是「某医院体检人群中的比例」（B 级），恶性占比是临床共识（A 级）**，两句话的来源强度不同。另外注意，近年甲状腺结节检出率上升有相当一部分来自超声设备精度提高（查得出以前查不出的东西），不是患病率的真实上升——引用「检出率翻倍」这类说法时要小心。\n\n### 2. 慢性咽炎 61.64%：把嗓子当成耗材来管理\n\n<!-- 成本标签: 钱=少 时间=少 毅力=些 收益=中 口径=健康 -->\n\n- 成本：买一个保温杯、一支润喉小物；如果症状持续，一次耳鼻喉科就诊。\n- 说人话：嗓子是这一行的生产工具，但几乎没有人把它当工具维护。三个最实际的动作：**说话时把「喊」改成「用气」**（练腹式发声，比清嗓子有用）；**上课前后喝温水，不喝浓茶咖啡**；**不要用「清嗓子」这个动作缓解喉咙异物感**——它会让声带反复摩擦，越清越难受。\n- 收益：教师体检中慢性咽炎检出率 61.64%，是教师最普遍的一项。医院给出的建议包括：远离烟酒、粉尘及有害气体刺激，清淡饮食，避免过多辛辣、油炸及甜食；多饮温开水；加强体育锻炼，保持口腔、咽部清洁，**掌握科学发音技巧与嗓音养护常识，平时避免大声说话**；症状加重或长时间不缓解需及时就医。\n- 证据等级：B\n- 来源：长沙晚报，同本节第 1 条。\n- 备注：给 B 的原因同本节第 1 条的后半段——61.64% 来自单家医院的体检人群统计，不是全国流行率。**「掌握科学发音技巧」这一条在嗓音医学里有明确支持**（嗓音训练对教师嗓音障碍有效，属嗓音治疗的标准做法），但本书没有找到中文大样本随机试验，所以整体不升格为 A。\n\n### 3. 血脂异常 56.96%：最危险的是它不疼\n\n<!-- 成本标签: 钱=少 时间=少 毅力=些 收益=大 口径=健康 -->\n\n- 成本：一次血脂化验（常规体检含）；如果异常，可能需要他汀类药物，费用看医保目录。\n- 说人话：血脂高不高，你自己是感觉不到的——没有疼、没有痒、没有难受。这就是它比咽炎和结节更值得盯的原因：**有症状的病你会去管，没症状的病只有靠查**。它指向的是十几年后的心梗和脑梗，而那两样是能要命的。\n- 收益：教师体检中血脂异常检出率 56.96%，与运动缺乏、饮食不规律密切相关；男性教师检出率较高的是血脂异常、肥胖或超重、咽炎。\n- 证据等级：B\n- 来源：长沙晚报，同本节第 1 条。相关防治背景见晴隆县人民医院教师群体健康宣教材料。<https://www.qlxrmyy.com/index/news/detail/id/275.html>\n- 备注：**这条的病种方向和「检出率数字」的证据强度要分开看**：血脂异常与心脑血管事件的因果关系有极强的一级证据（这是现代医学最确定的结论之一），但「教师检出率 56.96%」只是单家医院数据。本书把「该管」定为 A 级判断，「56.96%」标为 B 级数据，不混在一起说。\n\n### 4. 女教师：乳腺小叶增生 70.7%，重点不是数字是成因\n\n<!-- 成本标签: 钱=少 时间=少 毅力=些 收益=中 口径=健康 -->\n\n- 成本：一次乳腺超声；之后按医嘱复查。\n- 说人话：70.7% 这个数字看着吓人，但乳腺小叶增生本身是很常见的良性改变，它更像一个「内分泌与情绪压力的指示灯」。医院明确把「精神情志因素」列为成因之一——**心情不舒畅、过度劳累、工作压力大**都会影响雌孕激素分泌节律。所以它值得注意的不是「会不会癌变」，而是「我的内分泌已经在报警了」。\n- 收益：教师体检中乳腺小叶增生检出率 70.7%，居首位；医院说明其发病原因主要与内分泌功能紊乱密切相关，精神情志因素也有一定作用——心情不舒畅、过度劳累、工作压力大、生活环境变迁，或过多食用含激素的滋补品、长期使用含激素成分的化妆品，均可影响雌孕激素分泌比例或节律。建议包括：避免和减少精神心理紧张因素、不喝或少喝酒、减少高脂肪高热量饮食、坚持锻炼、作息规律、控制体重、适时婚育与母乳喂养、**养成每月 1 次乳房自查习惯、每年定期进行乳腺体检**；一旦发现乳房肿块或月经周期乳房胀痛、乳头溢液等现象，及时到乳腺外科检查。\n- 证据等级：B\n- 来源：长沙晚报，同本节第 1 条。\n- 备注：给 B 的理由同上（单院体检统计）。**这里要特别提醒一句**：网上有文章把「女教师乳腺癌风险比其他职业女性高 60%」这类数字广泛传播，本书没有找到该数字的原始研究，因此**不引用**。遇到这类精确到个位数的「风险高出百分之多少」，先问一句「哪项研究、什么设计、样本多少」——答不上来的，就不要转。\n\n### 5. 下肢静脉曲张：久站的代价，但它不在职业病目录里\n\n<!-- 成本标签: 钱=少 时间=少 毅力=些 收益=中 口径=健康 -->\n\n- 成本：一双弹力袜（医用级约 150 到 400 元）；严重时需血管外科评估。\n- 说人话：站一整天的人容易得这个，教师和交警、售货员一样。三个能做的动作：**上课时两脚交替承重、别一直站定**；**课间把腿抬高几分钟**；**长期站着的时候穿医用弹力袜**（是「医用」那种，不是普通瘦腿袜）。如果已经出现明显的血管凸起、腿部沉重酸胀、晚上抽筋，去血管外科看，不要当「站久了都这样」。\n- 收益：职业病是法定概念，需同时满足四个条件：属于用人单位的劳动者、职业危害直接导致、疾病与危害有明确因果关系、**属于国家《职业病分类和目录》**。长期站立导致的**下肢静脉曲张、颈椎病、腰肌劳损、慢性咽炎均未纳入现行目录，属于「工作相关疾病」而非职业病**，不受职业病相关法律保护。官方职业健康科普明确提示：长期站姿作业要通过适当走动等方式保持腰部、膝盖放松，防止静脉曲张。\n- 证据等级：A\n- 来源：海口市人力资源和社会保障局《工伤预防小课堂》第 24 期。<https://rsj.haikou.gov.cn/ztbd/gsyf/202406/t1363170.shtml> ; 青岛市疾病预防控制中心《工作相关疾病是职业病吗？》。<http://www.cdcqd.cn/info_view?newsid=120049>\n- 备注：给 A 是因为「不在目录内」是一个可由目录文本直接核实的事实判断，不是研究结论。**这条的实际含义要说透**：它意味着你不能拿「教师职业病」去申请工伤待遇。但这不妨碍你把它当作真实的健康问题去处理，也不妨碍你在体检时主动要求加做下肢血管超声。**「不是职业病」和「不用管」是两件事。**\n\n### 6. 睡眠问题是中学和大学教师最突出的问题——而它排在其他问题前面\n\n<!-- 成本标签: 钱=少 时间=中 毅力=些 收益=大 口径=健康 -->\n\n- 成本：不花钱（行为调整）或一次睡眠门诊（已纳入多数地区门诊保障）。\n- 说人话：在那份 57 万人的元分析里，**中学教师和大学教师排在第一位的问题都是睡眠问题**，而不是抑郁或焦虑。这个排序有实际指导意义：如果你同时睡不好、情绪差，先处理睡眠——**睡眠是上游，情绪是下游**。长期睡不好会直接恶化情绪，反过来情绪差又更睡不着，从睡眠这一头切进去，通常比从情绪那一头容易。\n- 收益：元分析显示，中学教师检出率较为突出的心理健康问题依次为睡眠问题、强迫、抑郁；大学教师为睡眠问题、强迫、抑郁、焦虑——**睡眠问题在这两个学段的排序中均位于首位**。国家卫健委已在全国 333 个地级市和所有直辖市的 87 个区县设置心理门诊和睡眠门诊，2025 年睡眠门诊服务量较 2024 年同期提升 39%。\n- 证据等级：A\n- 来源：俞国良. 新世纪以来我国教师心理健康问题：检出率分析与应对[J]. 北京师范大学学报（社会科学版），2025(1): 73-84. <https://wkxb.bnu.edu.cn/CN/Y2025/V0/I1/73> ; 睡眠门诊覆盖率与增量见《法治日报》2026 年 1 月 6 日报道。<https://epaper.legaldaily.com.cn/fzrb/content/20260106/Articel07002GN.htm>\n- 备注：给 A 是因为学段排序来自大样本元分析、门诊覆盖率来自国家卫健委公开数据。**「先处理睡眠」这个先后顺序是我的推断，不是研究结论**——元分析只告诉了你哪一项检出率最高，没有做因果排序。所以这一条是「A 级数据 + 一个待验证的策略建议」，请按前者置信、后者试验。\n\n### 7. 体检查出异常之后的标准动作：分三档，不当场做决定\n\n<!-- 成本标签: 钱=少 时间=中 毅力=些 收益=中 口径=健康 -->\n\n- 成本：复诊的时间与挂号费。\n- 说人话：看到体检报告先做一道分类题，避免两种极端——一种是「没事，教师都这样」，一种是当天就上网查到觉得自己完了。**第一档：报告上写「建议复查/进一步检查」的，当年就去。第二档：明确的数字异常（血脂、血压、血糖、BMI），去全科或内科，让医生给一个随访间隔。第三档：写了具体分级和随访建议的（如甲状腺结节、乳腺 BI-RADS、肺结节 Lung-RADS），按报告上写的间隔复查，不自行缩短也不延长。**\n- 收益：以甲状腺结节为例，医院给出的随访建议是：**良性结节每年进行 1 次临床检查、超声和 TSH 检测；如果结节明显生长、体积增大 50% 以上，要及时就医。** 教师体检中「出镜率」较高的项目还包括肺结节（Lung-RADS 2 级）、乳腺结节（BI-RADS 0—3 级）、正常高值血压、肥胖或超重、痔疮、近视。\n- 证据等级：B\n- 来源：长沙晚报，同第 1 条（超声随访建议）；青岛市疾病预防控制中心（职业相关疾病防护）。<http://www.cdcqd.cn/info_view?newsid=120049>\n- 备注：给 B 是因为随访间隔出自三甲医院的健康管理建议，合理但没有随机试验去比较「每年 1 次」和「每 2 年 1 次」哪个更好。**这一条真正的价值是那个「三档分类」的动作**——它的作用是阻止你在拿到报告当天做出任何极端决定。报告上的分级（BI-RADS、Lung-RADS）本身就是设计给你的行动指令，照它写做就行。\n","03-心理与撑不住的时候.md":"# 第 3 节 心理：抑郁、焦虑，以及「撑不住」的时候\n\n**口径**：心理与情绪\n\n这一节请你先读本节第 2 条，把它做完，再回来读别的。**那一条只需要一分钟，但它可能是全书写得最值钱的一条。**\n\n关于这一节的处理方式，先说清楚三件事：\n\n1. **不写方法，不写案例细节。** 关于「怎么做」的信息，对处在危机中的人是伤害而不是帮助。这不是回避，是安全传播的基本要求。\n2. **不把心理危机描述成「看不出来、无法预防」的事。** 恰恰相反，绝大多数危机都有可识别的前兆，而且可干预。\n3. **不把求助写成软弱。** 下面本节第 4 条会说明，判断标准是持续时间和功能损害，跟你意志力强不强没有关系。\n\n---\n\n### 1. 「撑不住」是一个需要排查的状态，不是意志力问题\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=心理 -->\n\n- 成本：不花钱。换一个看问题的方式。\n- 说人话：教师这个职业有一个特别伤人的默认设定——**把「扛住」当作职业素养的一部分**。于是情绪问题被归类为「不够专业」「心态不好」，而不是「一个需要处理的状态」。这个归类错了，而且代价很大。正确的归类是：长期高压下出现抑郁、焦虑、失眠，和长期站立出现静脉曲张一样，是**可预期的、可排查的、可处理的**，不是人品问题。\n- 收益：元分析显示，排除检出率较低的幼儿教师后，大中小学教师群体心理健康问题总检出率为 17.5%，其中中学教师抑郁症状检出率达 23.4%、焦虑症状检出率达 21.8%；且 1998 年至 2020 年间，教师心理相关问题整体呈缓慢上升态势。\n- 证据等级：B\n- 来源：俞国良. 新世纪以来我国教师心理健康问题：检出率分析与应对[J]. 北京师范大学学报（社会科学版），2025(1): 73-84. <https://wkxb.bnu.edu.cn/CN/Y2025/V0/I1/73>\n- 备注：**数字是 A 级的，但「换个归类方式就能改善」这个主张是 B 级**——它符合认知行为治疗的基本逻辑（归因方式影响情绪反应），也有临床实践支持，但本书没有找到针对教师群体的随机试验。所以这一条请这样用：数字告诉你「这很普遍」，换归类的建议请你试；试了没效果，就走本节第 3 条去就诊。\n\n### 2. 先把 12356 存进手机——全国统一心理援助热线\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=心理 -->\n\n- 成本：不花钱。一个联系人条目。\n- 说人话：**12356**，全国统一心理援助热线，2025 年 5 月 1 日起在全国 31 个省（区、市）开通。匿名通话，不用报单位和姓名。国家卫健委的文件要求原则上每个设区的市至少开通 1 条热线、每条至少 2 个坐席，**每日提供不少于 18 小时服务**（部分城市已实现 24 小时）。它和 110、119、120 建立了联动机制。\n  请现在就存进手机，并在备注里写一句「心理援助」。**不要等到需要的时候再搜**——在那种状态下，搜索这件事本身就是一道过不去的坎。\n- 收益：《国家卫生健康委关于应用「12356」全国统一心理援助热线电话号码的通知》（国卫医政函〔2024〕259 号）要求：各地确保于 2025 年 5 月 1 日 0 时前实现拨打「12356」接通心理援助热线；原则上每个设区的市至少开通 1 条心理援助热线，每条至少设置 2 个坐席，配备足量符合要求的热线咨询员，每日提供不少于 18 小时心理援助服务；积极推进心理援助与 110、119、120 等服务热线建立联动机制。截至 2025 年底，全国 12356 热线已接通电话超过 70 万通，成功实施危机干预近 1 万起。\n- 证据等级：A\n- 来源：国家卫生健康委《关于应用「12356」全国统一心理援助热线电话号码的通知》（国卫医政函〔2024〕259 号，2024 年 12 月 6 日）。<https://www.gov.cn/zhengce/zhengceku/202412/content_6994470.htm> ; 接通量与危机干预数见《法治日报》2026 年 1 月 6 日报道。<https://epaper.legaldaily.com.cn/fzrb/content/20260106/Articel07002GN.htm>\n- 备注：给 A 是因为号码和服务要求来自国家卫健委正式文件，可逐条核对。**「不少于 18 小时」要按官方口径说**，网上大量文章写成「24 小时」是不准确的——虽然很多城市确实实现了全天候，但那是地方实践，不是全国统一承诺。另外要记住：**如果是有立即危险的紧急情况（比如已经有了具体的行动计划或正在实施），打 120 或 110，不是 12356。** 热线的定位是心理支持与危机干预，不是急救。\n\n### 3. 什么情况该去看医生，而不是「再忍忍」\n\n<!-- 成本标签: 钱=少 时间=中 毅力=些 收益=大 口径=心理 -->\n\n- 成本：一次精神科或心理科门诊。多数地区已纳入门诊保障范围；心理咨询自费部分各省差异较大。\n- 说人话：把「去看医生」的门槛说清楚，别让你自己猜。**符合下面任意一条，就该去**：情绪低落或兴趣减退**持续两周以上**；睡眠明显变差且持续（入睡困难、早醒、睡了不解乏）；已经影响到上课、备课、带班这些具体功能；出现躯体症状但查不出原因（心慌、胃部不适、头疼）；用酒精或其他东西来让自己好过一点。**「能不能自己扛过去」不是判断标准，「持续多久、影响到什么程度」才是。**\n- 收益：国家卫健委已在全国 333 个地级市和所有直辖市的 87 个区县设置心理门诊和睡眠门诊，2025 年心理门诊服务量较 2024 年同期提升 17%、睡眠门诊提升 39%。《中华人民共和国教师法（修订草案）（征求意见稿）》第四十二条拟规定「医疗机构应当对教师提供优先服务」（**注意：这是征求意见稿，不是已生效的法律**）。\n- 证据等级：A\n- 来源：心理门诊与睡眠门诊覆盖率见《法治日报》2026 年 1 月 6 日报道。<https://epaper.legaldaily.com.cn/fzrb/content/20260106/Articel07002GN.htm> ; 教师法修订草案相关信息见教育部《教师法（修订草案）公开征求意见》。<https://www.moe.gov.cn/jyb_xwfb/s5147/202111/t20211130_583360.html>\n- 备注：给 A 是因为「门诊资源在哪」和「草案写了什么」都是可核实的事实。**「持续两周以上」这个阈值来自抑郁发作的临床诊断标准（DSM/ICD 体系），是临床通行口径，不是本书发明的。** 但要强调：诊断标准 ≠ 自我诊断工具。它的用处是帮你判断「该不该挂号」，不是帮你判断「我是不是得了这个病」。另外「草案 ≠ 生效法律」这一点必须说清——2021 年公布的征求意见稿至今，引用「教师看病优先」时请加一句「拟规定」。\n\n### 4. 判断标准是持续时间和功能损害，不是「我是不是矫情」\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=心理 -->\n\n- 成本：不花钱。换两个问句。\n- 说人话：很多人不去就诊，卡在一个自我拷问上：「我这点事算不算病？」这个问题本身是问错了。**改成问两个可回答的问题**：一，这个状态持续多久了（以周计）？二，它影响了我哪些具体的事（上课、备课、带班、对家人）？如果答案是「两周以上，且已经影响了两件以上具体的事」，那就不需要再纠结算不算病——去挂号，让医生判断。**把「我配不配」换成「多久了、影响什么」，这一步本身就能让人动起来。**\n- 收益：目前没有针对教师群体的随机试验来比较「用持续时间和功能损害自评」与「凭主观感受」对就诊行为的影响。相关依据是抑郁、焦虑障碍的临床诊断框架本身即以**症状持续时间**和**社会功能损害**为核心维度，而不是以「严重程度感受」为核心维度。\n- 证据等级：B\n- 来源：临床诊断框架（ICD/DSM 体系）中对抑郁发作的持续时间与功能损害要求；本书未找到针对教师的实施性研究。\n- 备注：给 B 的原因：诊断框架本身是权威的，但「把它转成两个自问句能提高就诊率」这一步没有研究支持。写出来是因为这两个问题**比「我算不算病」更可回答**，属于把临床语言翻译成日常语言，不涉及新的医学主张。\n\n### 5. 教师求助的三个现实障碍，以及怎么绕过\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=心理 -->\n\n- 成本：主要是心理上的。\n- 说人话：这一行的人不去求助，通常不是因为不知道渠道，而是三个很具体的顾虑：**怕被同事和领导知道**（影响评优、考核、形象）；**怕被说「当老师的自己都这样」**；**不敢在工作时间请假去看病**。能绕开第一个的是「不在本单位医疗体系、不通过学校转介」的渠道——比如 12356（匿名）、或直接去离家远的医院精神科/心理科挂号。第二个要靠本节第 7 条说的那件事。第三个最实际：**利用寒暑假或调课，把首诊安排在能请假的时段**，首诊之后复诊通常可以约到更方便的时间。\n- 收益：浙江省教职工心理健康教育服务中心接待教师咨询的情况显示，「亲子关系、婚恋和家庭方面的困惑」是来访教师咨询的主要问题之一；同时有访谈报道提到，教师对学生疏于陪伴是普遍现象（「其实老师对自己的孩子大多是疏于陪伴的」）。这说明教师寻求帮助时的议题常常不在「工作压力」这个标签下，而是伪装成家庭问题出现。\n- 证据等级：D\n- 来源：《大中小学教师群体的心理健康问题总检出率为 17.5%！教师「心病」为哪般？》中引述浙江省教职工心理健康教育服务中心办公室主任孟婷婷的说法。<https://new.qq.com/rain/a/20250227A04LCU00>\n- 备注：给 D 的原因：**「三个障碍」和「怎么绕过」都是实务判断，没有对照研究支持。** 唯一有出处的是「亲子关系、婚恋家庭是主要咨询议题」这一点（属于服务机构的工作观察，也不是研究数据）。之所以还是写出来，是因为这三道坎是真实存在的，而它们的解法不需要证据也能成立——「不在本单位就医」只需要你选择去哪家医院。\n\n### 6. 如果出现过「不想活了」的念头：把它当胸痛处理\n\n<!-- 成本标签: 钱=少 时间=中 毅力=些 收益=大 口径=心理 -->\n\n- 成本：打一个电话，或者一次急诊。\n- 说人话：**出现这种念头，等同于胸口疼——它是需要当天处理的信号，不是需要「调整心态」的信号。** 它不代表你软弱，也不代表你有性格缺陷；它代表你身上的压力已经超过了当前能承受的量，这是一个可以改变的量的关系。\n  三件事按顺序做：**一，不要独处**，给一个你能联系到的人打电话，不需要解释原因；**二，打 12356**（心理援助热线），如果需要立即的紧急救助，打 120 或 110；**三，尽快约精神科或心理科的门诊**。\n  另外说一句可能对你有用的话：**直接问一个人「你是不是有过不想活的念头」，不会把念头植入给他。** 这是安全传播里被反复确认的一点。如果你怀疑身边的同事处在这样的状态，可以直接问，然后陪他打那个电话。\n- 收益：中国将自杀预防纳入国家心理健康服务体系，12356 热线截至 2025 年底已实施危机干预近 1 万起，热线与 110、119、120 建立联动机制（国卫医政函〔2024〕259 号明确提出推进联动机制建设）。\n- 证据等级：B\n- 来源：国卫医政函〔2024〕259 号（热线定位与联动机制）。<https://www.gov.cn/zhengce/zhengceku/202412/content_6994470.htm> ; 危机干预起数见《法治日报》2026 年 1 月 6 日报道。<https://epaper.legaldaily.com.cn/fzrb/content/20260106/Articel07002GN.htm>\n- 备注：给 B 的原因：**「这是需要当天处理的健康事件」这个判断在临床上是共识，但「把它类比成胸痛能提高求助率」这一步是本书的表述方式，不是研究结论。** 这一条刻意不写任何与手段、场景有关的信息——那类信息对处在危机中的人是风险因素，这也是 WHO 与中国相关安全传播规范的一致要求。**如果你现在就在这个状态里，先做三件事里的第一件：找一个不用解释原因也能打过去的电话。**\n\n### 7. 不要做的一件事：把心理危机当成师德问题处理\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=心理 -->\n\n- 成本：不花钱。只要求你在那个时刻不说那句话。\n- 说人话：这一条是写给管理者看的，也是写给每个可能成为「第一个知道的人」的教师看的。**当一个教师出现明显的情绪崩溃、请假、说出绝望的话，把它当成「师德滑坡」「不负责任」来对待，是最坏的处理方式**——它会把这个人从「还在求助」推向「不再求助」。正确的位置是把它当健康事件：先关心人，再谈工作安排；不追问细节，不要求对方在科室里说明原因；必要时帮他联系专业渠道（而不是替他判断）。\n- 收益：教育部在 2026 年教师节前的新闻发布会上明确提出要让老师「手中有矩、心中有度、身后有盾」，其中「身后有盾」的具体措施包括**规范涉师争议投诉处理程序、畅通教师法律咨询和援助渠道、对不实举报及时澄清正名**。这一框架针对的是外部侵害，但其逻辑同样适用于内部对待方式：**制度应当先保护人，再评价人。**\n- 证据等级：D\n- 来源：教育部《对涉师不实举报，及时为老师澄清正名……》新闻发布会报道。<https://www.moe.gov.cn/fbh/live/2026/78355/mtbd/202609/t20260907_1449532.html>\n- 备注：给 D 的原因：**政策文件里没有直接写「不要把心理危机当师德问题」，这一条是我的推论**（从「先保护人再评价人」的框架推出的）。之所以标 D 而不是不写，是因为这类处理方式在实际工作中确实反复出现，而它造成的伤害是确定的。**这一条不主张任何新政策，只是提醒：在制度还没覆盖到的地方，个人可以先不做那件错事。**\n","04-时间与非教学负担.md":"# 第 4 节 时间：排课、非教学任务，与那些你其实可以拒绝的事\n\n**口径**：时间与精力\n\n这一节是全书最有「操作性」的一节。原因很直接：**国家层面关于教师减负已经发了两轮文件，里面写的很多是硬规定，不是倡导。** 这意味着当你被要求做某些事时，你有具体条文可以引用。\n\n先记住一个判断顺序，后面每一条都是在给它加细节：**这件事属于教育教学吗？不属于——那它有没有进「白名单」？没进——那它就没有合法依据占用你的时间。**\n\n---\n\n### 1. 先算清你的时间去哪了：一张三栏表\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=时间 -->\n\n- 成本：连续记两周，每天约 5 分钟。\n- 说人话：不要凭感觉说「我很忙」。拿一张纸分三栏，连续记两周：**① 教育教学**（上课、备课、批改、教研、辅导）；**② 非教育教学但被要求做的**（填表、迎检、留痕、执勤、打卡、非教学培训）；**③ 自己认为有价值但没人要求的**（真教研、自我提升、和学生的一对一谈话）。\n  两周之后你会得到两个数字：第二栏每周几小时，第三栏每周几小时。**这两个数字是你后面所有谈判的弹药**，也是你决定砍掉什么的依据。几乎所有做过这个记录的人都会发现同一件事：第三栏小得让人心疼，而第二栏大得让人意外。\n- 收益：全国 24 万多名中小学教师的调查显示，义务教育阶段教师每周在非教育教学活动上的工作时间为 10.29 小时，高中教师 11.22 小时，班主任 12.30 小时。教育部此前调研给出的教师周平均工作时间为约 60 小时。\n- 证据等级：D\n- 来源：非教学时长数据见中国青年网引述北京师范大学蒋艳双等人研究（《中小学管理》2025 年第 4 期）。<https://news.youth.cn/jsxw/202511/t20251111_16343462.htm>（该数据为 A 级）；**「记两周三栏表」这个做法本身没有研究支持，故本条标 D**\n- 备注：**这一条是「A 级数据 + D 级方法」的组合，请按这个结构理解它。** 数据告诉你「非教学时间大概占每周一天多」，这是真的、可引用的；而「自己记两周」只是一个把群体数据落到你个人头上的办法，没有任何研究证明它比别的办法好。写它是因为它便宜——两周、每天五分钟，而且产出的数字在下一节所有场景里都能用。\n\n### 2. 2025 年新规：这些事，学校不能再让你做了\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=时间 -->\n\n- 成本：不花钱。把文件名和文号记住。\n- 说人话：2025 年 11 月，教育部办公厅发了一份专门讲「减轻中小学教师非教育教学负担」的通知，一共 8 条措施。它比 2019 年那份中办国办文件更细、更具体。**它不是「倡导」，是「严禁」和「不得」的表达。** 当你被要求做某件明显不是教书的事时，这份文件是你最该引用的东西。\n- 收益：《教育部办公厅关于进一步减轻中小学教师非教育教学负担若干措施的通知》（2025 年 11 月）从规范督查检查评比考核事项、优化社会事务进校园「白名单」制度、精简数据填报、完善课后服务保障等方面提出 8 条措施。此前的 2019 年中办、国办《关于减轻中小学教师负担进一步营造教育教学良好环境的若干意见》共六个方面 20 条，明确：经过清理，确保对中小学的督查检查评比考核事项在现有基础上**减少 50% 以上**，清理后保留事项实行清单管理。\n- 证据等级：A\n- 来源：教育部办公厅《关于进一步减轻中小学教师非教育教学负担若干措施的通知》。<https://www.moe.gov.cn/srcsite/A10/s7058/202511/t20251107_1419596.html> ; 中办、国办《关于减轻中小学教师负担进一步营造教育教学良好环境的若干意见》（2019 年 12 月印发）。\n- 备注：给 A 是因为这是现行有效的部委文件，条文可以直接查到、逐句引用。**一个实用的建议：把这份通知的链接存在手机里，不要只记文件名。** 跟学校谈的时候，能当场调出原文，比说「我记得有份文件」有效得多。\n\n### 3. 社会事务进校园要过「白名单」，白名单之外要审批\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=时间 -->\n\n- 成本：不花钱。\n- 说人话：这条直接把「什么活动能进学校」变成了一道可查的题。**实施进校申请制度：「白名单」之外确需进入校园的，须报同级党委教育工作领导小组审核同意，并通过指定平台完成申请流程，且不得突破当年计划总量。** 通知还明确：严禁强制要求师生参与与教育教学无关的活动，**不得要求教师承担巡河护林、上街执勤、创城庆典、汇演展览等非教育教学任务**；严禁以打卡留痕、填报总结等方式验收活动，**不得将参与情况与考核评优挂钩**。\n- 收益：上述条文出自 2025 年 11 月教育部办公厅通知第三条与第三条相关内容。此外要求：如课程已涵盖类似内容，原则上不再专门进入校园，应当与课堂教学、班团队会、主题教育、课后服务等学校日常教育和管理工作有机融合。\n- 证据等级：A\n- 来源：同本节第 2 条。\n- 备注：给 A 是因为这是文件原文的逐条转述，可以对着原文核。「不得将参与情况与考核评优挂钩」这一句特别有用——**它切断了「做不做」和「评不评优」之间的绑定**，而那个绑定正是这类任务难以拒绝的根源。可以引用的场景：被要求参加某个进校活动并被暗示与考核有关时。\n\n### 4. 每校每年社会考试不超过 5 次；假期原则上不安排专任教师值班\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=时间 -->\n\n- 成本：不花钱。\n- 说人话：三条很具体的数字规定，很好记：**一，严格规范管理中小学校承担社会考试和教师监考任务，每校每年承担社会考试次数不超过 5 次。二，法定节假日、周末、寒暑假等无学生在校期间，原则上不安排专任教师值班值守。三，除依法依规组织的必要培训外，原则上不得要求教师参加非教育教学培训，各类培训时间安排应避开教学高峰期。**\n- 收益：上述条文出自 2025 年 11 月教育部办公厅通知第四条、第六条相关内容。\n- 证据等级：A\n- 来源：同本节第 2 条。\n- 备注：给 A 是因为「不超过 5 次」「原则上不安排」是可核对的硬规定，不是模糊表述。**这三条之所以有价值，恰恰因为它们给了数字**——「每校每年不超过 5 次」是可以数的，你数出你们学校今年第 6 次社会考试，就有具体依据可说了。\n\n### 5. 政务 App 不得设打卡签到、积分排名、统计在线时长\n\n<!-- 成本标签: 钱=0 时间=中 毅力=否 收益=中 口径=时间 -->\n\n- 成本：不花钱。但要主动去查和退订。\n- 说人话：这一条是对「手机上那一堆教育 App」的正面规定。**省级教育行政部门建立教育移动应用管理责任制度，对面向中小学校和教师的政务应用程序每年开展 1 次集中清理，形成省级选用清单。应用程序不得设置打卡签到、积分排名、统计在线时长等强制性功能，非必要不得强制要求教师上传工作照片、视频和轨迹。** 另外要求推进「一网统管」「基层一表通」，实现数据一次采集、多方共享；**不得安排教师从事教育教学以外的数据统计报表工作，非教育教学业务调研工作不得进入校园一线开展。**\n- 收益：上述条文出自 2025 年 11 月教育部办公厅通知第五条。\n- 证据等级：A\n- 来源：同本节第 2 条。\n- 备注：给 A 同上。**这条有个很实用的动作**：把你手机上为工作装的 App 列出清单，逐个看它有没有「打卡签到」「积分排名」「在线时长」这三类功能。有，就说明它属于被明确禁止的那一类，可以向学校或上级教育部门反映。这比笼统地抱怨「App 太多」有力得多。\n\n### 6. 借调：一般不超过 6 个月，延期一般不超过 6 个月\n\n<!-- 成本标签: 钱=0 时间=大 毅力=些 收益=大 口径=时间 -->\n\n- 成本：如果被借调，这一段时间的教学和自己的生活都会被影响。\n- 说人话：借调这件事的代价很大——你的人走了，但课还在，通常要同事分担；而你自己的教研积累断了。所以规定写得很死：**上级机关、单位原则上不得借调中小学教师，不得以工作专班、跟班学习、交流锻炼等名义变相借调。确因工作需要的，应当经教育主管部门同意，并报同级党委组织部门和上级教育行政部门备案；借调时间一般不超过 6 个月，特殊情况需要延期的，延长时间一般不超过 6 个月，并应当提前征得派出学校和本人同意。** 省级教育行政部门建立常态化清理机制，定期清理、限期清退。\n- 收益：上述条文出自 2025 年 11 月教育部办公厅通知第四条。\n- 证据等级：A\n- 来源：同本节第 2 条。\n- 备注：给 A 同上。这里最关键的一句是**「并应当提前征得派出学校和本人同意」——本人同意是明文要求**。也就是说，没有经过你同意的借调，在程序上是有问题的。同时注意「不得以工作专班、跟班学习、交流锻炼等名义变相借调」这一句：它针对的是最常见的绕过方式。\n\n### 7. 从「什么都要做」到「先问一句：这是谁的事」\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=时间 -->\n\n- 成本：每次多花 10 秒，以及可能的一点人际尴尬。\n- 说人话：文件和条文能帮你挡掉一部分，但挡不了全部——因为最难挡的是那些「不好意思拒绝」的事。这里有一个很便宜的动作：**接到任何一件非教学任务时，先在心里问一句「这件事的责任主体是谁」。** 如果答案不是学校、不是教师（比如是某个政府部门、某个社区、某个企业活动），你就知道这件事本来不该落在你头上。这一问不解决全部问题，但它至少能让你在答应之前意识到自己在让渡什么。\n- 收益：调查显示，教师认为负担过重的首要原因是「教师职责边界不清」，**60.4% 的教师选择此项**，占比最高；其次是行政管理干预。这为「职责边界」被列为减负政策的核心提供了实证依据——2025 年通知中的进校申请制度、「白名单」、借调管理，本质上都是在划这条边界。\n- 证据等级：D\n- 来源：中国教科院职业教育与继续教育研究所尹玉辉等人「课后服务与教师负担情况调查」，见中国青年网引述。<https://news.youth.cn/jsxw/202511/t20251111_16343462.htm>（60.4% 为调查数据，可作 B 级参考）；**「先问责任主体」这个动作本身没有研究支持，故本条标 D**\n- 备注：给 D 的原因同本节第 1 条——**数字是实的，方法是判断**。这一条是全书唯一一条「心理动作」而不是「制度动作」，之所以保留，是因为制度再密也有缝隙，而缝隙里的那一步只能靠自己跨。**如果你只从这一节带走一件事，带走一个文件链接（本节第 2 条）加一个问句（本节第 7 条）就够了。**\n","05-学生安全与惩戒边界.md":"# 第 5 节 学生：安全、惩戒，与「管到哪一步」的边界\n\n**口径**：法律与权益\n\n这一节的核心是一份文件：**《中小学教育惩戒规则（试行）》（教育部令第 49 号，2021 年 3 月 1 日起施行）**。它适用于普通中小学校和中等职业学校。\n\n这份文件对教师的意义是双向的：它一边给了你「可以做什么」，一边给了你「学校不能因此处分你」。**大多数教师只记得前一半，而真正救命的是后一半。**\n\n> 说明：本节绝大多数条目依据的是这份部门规章的原文，所以证据等级多为 A。**「A」在这里的意思是「这是现行有效的法规条文，可以逐字核对」，不是「这是研究结论」。**\n\n---\n\n### 1. 惩戒分三档：先弄清哪一档是你当场可以做的\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=法律 -->\n\n- 成本：不花钱。读一遍条文的时间。\n- 说人话：规则把教育惩戒分成**一般、较重、严重**三档，它们的实施主体和程序完全不同——这一点比「能做什么」更重要。**一般惩戒由教师当场实施，不需要谁批准；较重和严重惩戒由学校实施，且有告知家长的程序要求。** 很多纠纷的起因是教师做了本该学校做的事，或者反过来，该当场处理的憋着不敢处理，最后失控。\n  具体一点：**你当场能做的是**——点名批评；责令赔礼道歉、做口头或书面检讨；适当增加额外的教学或者班级公益服务任务；**一节课堂教学时间内的教室内站立**；课后教导；以及校规校纪、班规、班级公约规定的其他适当措施。\n- 收益：《中小学教育惩戒规则（试行）》第八条规定，教师在课堂教学、日常管理中，对违规违纪情节较为轻微的学生，可以当场实施以下教育惩戒：点名批评；责令赔礼道歉、做口头或者书面检讨；适当增加额外的教学或者班级公益服务任务；一节课堂教学时间内的教室内站立；课后教导；学校校规校纪或者班规、班级公约规定的其他适当措施。教师实施上述措施后，可以以适当方式告知学生家长。\n- 证据等级：A\n- 来源：《中小学教育惩戒规则（试行）》（教育部令第 49 号，2020 年 12 月 23 日公布，2021 年 3 月 1 日起施行）第八条。<https://www.gov.cn/zhengce/zhengceku/2020-12/29/content_5574650.htm>\n- 备注：给 A 是因为这是部门规章原文。「**一节课堂教学时间内的教室内站立**」这一句要读准两个限定：一是「一节课内」，二是「教室内」。它同时也说明——**超出一节课时间的罚站，就落进了第 12 条的禁止范围**（见本节第 2 条）。这两条要连起来读。\n\n### 2. 八类禁止行为：这是红线，也是你的护身符\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=法律 -->\n\n- 成本：不花钱。\n- 说人话：规则第十二条明确列了八类不得实施的行为。把它当成「倒过来的操作清单」读会更实用：**只要不碰这八条，你的管教行为在规则框架内就有位置。** 尤其注意第五项——**「因学业成绩而教育惩戒学生」是被明确禁止的**。这一条最容易被忽略，但成绩问题确实是日常管教中最常见的触发点。\n- 收益：第十二条规定，教师在教育教学管理、实施教育惩戒过程中，不得有下列行为：(一) 以击打、刺扎等方式直接造成身体痛苦的体罚；(二) 超过正常限度的罚站、反复抄写，强制做不适的动作或者姿势，以及刻意孤立等间接伤害身体、心理的变相体罚；(三) 辱骂或者以歧视性、侮辱性的言行侵犯学生人格尊严；(四) 因个人或者少数人违规违纪行为而惩罚全体学生；(五) 因学业成绩而教育惩戒学生；(六) 因个人情绪、好恶实施或者选择性实施教育惩戒；(七) 指派学生对其他学生实施教育惩戒；(八) 其他侵害学生权利的。\n- 证据等级：A\n- 来源：同本节第 1 条，第十二条。\n- 备注：给 A 同上。**第（二）项里的「反复抄写」和第（七）项的「指派学生对其他学生实施教育惩戒」是两个容易被忽略的雷**——前者常被当成温和手段，后者（比如让班干部去罚同学）在很多班级里是习惯做法。这两件在这个规则下都是不被允许的。\n\n### 3. 第 15 条：教师无过错的，学校不得处分——这是你最该记住的一条\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=法律 -->\n\n- 成本：不花钱。记住一句话。\n- 说人话：如果这一节你只记一句话，记这句：**「教师因实施教育惩戒与学生及其家长发生纠纷，学校应当及时进行处理，教师无过错的，不得因教师实施教育惩戒而给予其处分或者其他不利处理。」** 这是规则原文。它把「教师因管教被投诉」这件事的处理责任明确压给了学校，并且**明确禁止了「为了平息事情而处理教师」这种操作**。\n- 收益：第十五条规定：学校应当支持、监督教师正当履行职务。教师因实施教育惩戒与学生及其家长发生纠纷，学校应当及时进行处理，**教师无过错的，不得因教师实施教育惩戒而给予其处分或者其他不利处理**。教师违反本规则第十二条，情节轻微的，学校应当予以批评教育；情节严重的，应当暂停履行职责或者依法依规给予处分；给学生身心造成伤害，构成违法犯罪的，由公安机关依法处理。\n- 证据等级：A\n- 来源：同本节第 1 条，第十五条。\n- 备注：给 A 同上。**这一条与 2026 年 9 月教育部「让老师身后有盾」的表态是同一个方向**，但条文比表态更硬，因为它可以逐字引用。另外注意条文后半段：**处分的前提是「违反第十二条」**——也就是说，判断标准是你有没有碰红线，不是「有没有人投诉」。\n\n### 4. 未经公布的校规校纪不得施行——这决定了你的管教有没有依据\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=法律 -->\n\n- 成本：不花钱。\n- 说人话：这条容易被忽略但很关键：**学校的校规校纪必须先制定、公布，才能执行。** 规则要求学校制定校规校纪时要广泛征求教职工、学生和家长的意见（有条件的可组织听证），提交家长委员会、教职工代表大会讨论，经校长办公会议审议通过后施行，并报主管教育部门备案。同时明确：**未经公布的校规校纪不得施行。** 也就是说，如果学校要因为你执行了某条「大家心里都知道但没写下来」的规定而追究你，那条规定的合法性本身就是有问题的。\n- 收益：第五条规定学校制定校规校纪的程序；第六条规定「学校应当利用入学教育、班会以及其他适当方式，向学生和家长宣传讲解校规校纪。**未经公布的校规校纪不得施行。**」第六条规定学校可以建立校规校纪执行委员会等组织机构。第五条另规定教**师可以组织学生、家长以民主讨论形式共同制定班规或者班级公约，报学校备案后施行**。\n- 证据等级：A\n- 来源：同本节第 1 条，第五条、第六条。\n- 备注：给 A 同上。**第五条最后那句对班主任特别有用**：班规、班级公约由教师组织学生和家长民主讨论制定、报学校备案后施行——这是你的规则制定权，而且写在校规之上。**有书面班规的班主任，在处理学生问题时比没有的多一层合法依据。**\n\n### 5. 事故发生时，先留证，再解释\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=法律 -->\n\n- 成本：多花一点时间做记录。\n- 说人话：学生出事之后，**你说的任何一句话都可能成为证据，但你手里如果没有证据，就只有记忆**。所以出事后的动作顺序是：**一是保护现场和救助学生（永远第一）；二是尽快把事实按时间线写下来**（谁在场、几点几分、你做了什么、学生当时状态），**趁记忆还清楚**；三是保留一切书面与电子痕迹（通知家长的记录、学生陈述、目击学生的姓名）；四才是配合调查。**不要在没有记录的情况下先去做口头解释**——口头解释是最容易被重述、也最没有留存的形式。\n- 收益：现行规则针对的是「教育惩戒」而非事故处置，因此没有直接条文。可参照的是第 15 条的处理原则（学校应当及时处理、教师无过错不得给予不利处理）——**而「无过错」这个判断，在实际操作中高度依赖事实记录是否完整。**\n- 证据等级：B\n- 来源：依《中小学教育惩戒规则（试行）》第十五条的处理原则推得；事故处置与留证的具体做法没有条文规定，属实务判断。\n- 备注：给 B 的原因：**「事故后应当留证」是实务共识，不是法规条文，也没有对照研究。** 为什么仍然排到本节第 5 条：因为它是这一节里唯一一件「事后无法补救」的事——记录没做，就永远补不上了。要强调的顺序不能反：**救人永远先于留证。**\n\n### 6. 「已尽到教育、管理职责」是免责的关键，而它靠平时攒\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=法律 -->\n\n- 成本：平时每次多写一行字。\n- 说人话：在涉及学生伤害的责任判断里，「学校、教师是否已尽到教育、管理职责」是关键。**而「尽到」这件事，如果没有痕迹，事后很难证明。** 所以真正有用的不是出事那天说了什么，而是平时有没有留痕：安全教育是不是有记录、家长是不是被告知过、异常情况是不是上报过、之前有没有做过谈心。**平时一次签到、一条通知记录、一篇谈话记录，都比出事后的十句解释管用。**\n- 收益：《中小学教育惩戒规则（试行）》第四条要求实施教育惩戒「选择适当措施，与学生过错程度相适应」；第十五条处理原则以「教师无过错」为分界。规则要求的「告知家长」「听取陈述申辩」「听证」等程序性设计，本质上都在留存过程记录。相关实务观点认为，学校组织研学、体育活动学生发生意外，只要学校、教师已尽到安全教育、安全管理职责，就不应简单归责于教师（此为专家观点，非条文）。\n- 证据等级：B\n- 来源：《中小学教育惩戒规则（试行）》第四、十四、十五、十七条；「不应简单归责」的观点见《法治日报》报道中的专家意见。<http://h5epaper.legaldaily.com.cn/content/20260926/Articel04004SR.htm>\n- 备注：给 B 是因为「程序性设计即留痕」是我的解读，条文本身没有这样表述。**要区分清楚：条文规定的是「学校应当如何做」，本条讲的是「你个人应当如何保护自己」，后者是实务建议。**\n\n### 7. 学生出现自伤信号时，你的角色是上报和转介，不是独自处理\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=法律 -->\n\n- 成本：一次上报、一次联系家长的记录。\n- 说人话：这一条的性质是**边界**，不是能力。当学生出现明显的情绪危机或自伤倾向时，班主任的本能反应往往是「我来谈、我关心他」。但正确的定位是：**你是发现者和上报者，不是治疗者。** 该做的三件事：**一，立即启动学校的心理危机处置流程（书面或线上留痕）；二，通知家长并记录通知方式与时间；三，转介给学校心理老师或专业机构。** 不该做的是：独自长期承担、承诺保密而不上报、凭经验判断严重程度。\n  规则本身也给了配套机制：学校可以建立学生教育保护辅导工作机制，由分管负责人、德育工作机构负责人、教师以及法治副校长（辅导员）、法律和心理、社会工作等方面的专业人员组成辅导小组。\n- 收益：《中小学教育惩戒规则（试行）》第十三条规定，学校可以根据实际和需要建立学生教育保护辅导工作机制，由学校分管负责人、德育工作机构负责人、教师以及法治副校长（辅导员）、法律以及心理、社会工作等方面的专业人员组成辅导小组，对有需要的学生进行专门的心理辅导、行为矫治。第十条规定的严重教育惩戒措施中，包含「安排专门的课程或者教育场所，由社会工作者或者其他专业人员进行心理辅导、行为干预」。\n- 证据等级：B\n- 来源：《中小学教育惩戒规则（试行）》第十条、第十三条。\n- 备注：**给 B 的原因：机制是条文规定的（A 级），但「教师应定位为上报者而非承担者」这个角色建议是本书的判断，没有条文直接这样写。** 写这一条是因为它关系到两方的安全：学生的（需要专业干预）和教师的（独自承担既无效、又会把自己拖进不可承受的责任里）。**如果你所在学校没有危机处置流程，这一条最该做的事是去问一句「我们学校的流程是什么」——问出这个问题的过程本身就是在建立它。**\n","06-家长投诉与不实举报.md":"# 第 6 节 家长：沟通、投诉，与「被举报」之后\n\n**口径**：法律与权益／心理与情绪\n\n这一节回答一个很具体的问题：**被投诉了怎么办。** 顺序很重要——先知道规则站在哪，再知道动作怎么做，最后才谈心态。反过来做（先焦虑、再乱解释、最后才找依据）是最常见的失败路径。\n\n---\n\n### 1. 2026 年教育部的明确表态：对涉师不实举报要及时澄清正名\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=法律 -->\n\n- 成本：不花钱。\n- 说人话：2026 年 9 月 4 日，教育部教师工作司司长王磊在新闻发布会上把维护教师权益归纳成三件事：让老师**手中有「矩」**（教育惩戒有法可依）、**心中有「度」**（减掉非教学负担）、**身后有「盾」**。第三件事的具体内容是：**规范涉师争议投诉处理程序，畅通教师法律咨询和援助渠道，对涉及教师的不实举报及时为老师澄清、正名；对捏造事实、恶意诽谤教师的行为坚决「零容忍」，联合相关部门依法严肃处理，追究相关人员责任。**\n- 收益：上述表述出自教育部 2026 年教师节前新闻发布会（2026 年 9 月 4 日），教师工作司司长王磊发言。\n- 证据等级：A\n- 来源：教育部《对涉师不实举报，及时为老师澄清正名；对捏造事实、恶意诽谤教师的行为坚决「零容忍」，将联合相关部门依法严肃处理》。<https://www.moe.gov.cn/fbh/live/2026/78355/mtbd/202609/t20260907_1449532.html>\n- 备注：给 A 是因为这是教育部官员在正式发布会上的公开表态，可查到原文。**但要诚实说明它的性质**：这是**政策表态，不是法规条文**——「及时澄清正名」目前主要靠各地落实，还没有统一的操作细则和时限。所以它的用法是「引用来支持你的诉求」，而不是「当成可以强制执行的条文」。真正可强制执行的依据在下面几条。\n\n### 2. 《惩戒规则》第 16 条：家长威胁、侮辱、伤害教师的，学校和教育局要依法保护\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=法律 -->\n\n- 成本：不花钱。记住这一条的存在。\n- 说人话：这条把保护义务明确压给了学校和教育行政部门，不是你一个人扛：**「家长威胁、侮辱、伤害教师的，学校、教育行政部门应当依法保护教师人身安全、维护教师合法权益；情形严重的，应当及时向公安机关报告并配合公安机关、司法机关追究责任。」** 同条还规定，家长对教师实施的教育惩戒有异议的，可以向学校或者主管教育行政部门投诉、举报——也就是说，**投诉有正式渠道，不需要通过闹来实现。**\n- 收益：《中小学教育惩戒规则（试行）》第十六条：学校、教师应当重视家校协作，积极与家长沟通，使家长理解、支持和配合实施教育惩戒；家长应当履行对子女的教育职责，尊重教师的教育权利。家长对教师实施的教育惩戒有异议或者认为教师行为违反本规则第十二条规定的，可以向学校或者主管教育行政部门投诉、举报；学校、教育行政部门应当按照师德师风建设管理的有关要求，及时予以调查、处理。**家长威胁、侮辱、伤害教师的，学校、教育行政部门应当依法保护教师人身安全、维护教师合法权益；情形严重的，应当及时向公安机关报告并配合公安机关、司法机关追究责任。**\n- 证据等级：A\n- 来源：《中小学教育惩戒规则（试行）》（教育部令第 49 号）第十六条。<https://www.gov.cn/zhengce/zhengceku/2020-12/29/content_5574650.htm>\n- 备注：给 A 是因为这是条文原文，可以逐字引用。**这一条和同规则第十五条是配套的**：第 15 条管「学校不能因你管教而处分你」，第 16 条管「有人威胁伤害你时学校必须保护你」。两条一起引用，效果比单独一条强。\n\n### 3. 「被投诉即有错」这个默认，正在被正式否定\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=法律 -->\n\n- 成本：不花钱。但要接受「这件事不由你一个人决定」。\n- 说人话：很长一段时间里，学校处理家校纠纷的实际逻辑是「只要有投诉，先让教师自证清白」，甚至为平息舆论而快速问责。这个逻辑现在被公开否定了。官方媒体明确提出的方向是：**转变「被投诉即有错」的惯性思维，坚决摒弃一味让教师单方面自证清白的不合理做法**；**不能因为出现矛盾就预设教师存在过错，用牺牲教师权益换取表面的安宁**；严禁为平息舆论、化解压力对无过错教师过度问责、随意追责。\n- 收益：上述表述出自《中国教育报》评论《铸就尊师重教三重「盾」》与《法治日报》相关报道引述的专家意见。地方层面的具体做法已有先例：营口市鲅鱼圈区明确「对经核查属于恶意投诉、捏造事实、诬告陷害教师的，由教育行政部门或所在学校依规通过书面通报、内部公示等形式及时澄清正名，消除不良社会影响，并依法依规追究相关人员责任」；「坚决纠正『息事宁人』『唯舆情论』的错误处置导向，严禁为平息舆论、化解压力对无过错教师过度问责、随意追责」。\n- 证据等级：B\n- 来源：《中国教育报》《铸就尊师重教三重「盾」》。<https://paper.jyb.cn/zgjyb/h5/html5/2026-09/16/content_144742_19875182.htm> ; 《法治日报》《让教师手中有「矩」心中有「度」身后有「盾」》。<http://h5epaper.legaldaily.com.cn/content/20260926/Articel04004SR.htm> ; 地方做法见营口市鲅鱼圈区教育局对区人大建议的答复。<http://www.ykdz.gov.cn/govxxgk/kfq/2026-09-16/c4d4e142-1d75-43e5-8d28-bcc0ac50d322.html>\n- 备注：给 B 而不是 A 的原因很重要：**这些是官方媒体评论与专家观点，不是法律条文**。它们的价值是说明「上级的立场是什么」，可以用来支持你向学校提出的诉求；但如果要和学校硬碰，能引用的仍然是本节第 2 条的条文和第十五条。**立场对你有用，条文才管用。**\n\n### 4. 被投诉时的标准动作：书面、留痕、不私下解释\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=法律 -->\n\n- 成本：多花一些时间写书面材料。\n- 说人话：被投诉后最容易做错的两件事：**急着私下找对方解释**（会变成新的争议点，且没有记录）；**在群里或电话里辩解**（情绪化表达会被截图，而内容不受你控制）。更有用的顺序是：**一，要求通过正式渠道处理**（《惩戒规则》第 16 条明确投诉可向学校或主管教育行政部门提出）；**二，把事实按时间线写成书面材料**，附上能证明的材料（通知记录、作业批改、谈话记录、监控申请）；**三，只就书面材料答复，不在非正式场合谈实质内容**；**四，如果担心人身安全，第一时间向学校和主管部门书面报告**（触发第 16 条的保护义务）。\n- 收益：现行规则为教师提供了两条程序性支点：第十六条规定的投诉渠道与保护义务、第十五条规定的「教师无过错不得给予不利处理」。**但规则没有规定教师在被投诉时的具体应对程序**——本书给出的动作顺序属实务建议。\n- 证据等级：D\n- 来源：依《中小学教育惩戒规则（试行）》第十五条、第十六条推得的操作建议；**没有条文或研究直接规定这套动作。**\n- 备注：给 D 的原因：**「书面、留痕、不私下解释」是实务经验，不是规定。** 之所以排在本节第 4 条，是因为它决定后面所有事的走向——**有没有书面材料，是「教师无过错」这四个字能不能被认定的前提。** 另外提醒一点与程序有关的硬信息：学生对第十条所列教育惩戒或纪律处分不服的，可以在惩戒或处分作出后 **15 个工作日内**向学校提起申诉，学校应成立学生申诉委员会受理。**这个时限意味着「过程记录」在半个月内就可能被用到，别等到需要时再补。**\n\n### 5. 分清投诉的三种性质，处理方式完全不同\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=法律 -->\n\n\n- 成本：不花钱。花一点时间对投诉做一次性质判断。\n- 说人话：不是所有投诉都该用同一套反应。**第一类：有事实依据的投诉**——比如你确实说了过头的话。这类要正视、要沟通、要承担该承担的，处理得快反而伤害小。**第二类：事实清楚但理解不同的争议**——比如家长认为你的某个做法不合适而你认为是正常管理。这类靠程序（正式渠道 + 书面材料 + 学校调查）解决，不靠情绪。**第三类：缺乏事实依据的、基于主观臆断的、或反复无理纠缠的举报**——这类要做的不是自证，而是**要求学校依规前置甄别**，并保留追究诬告责任的权利。\n  现实中的建议方向是：由学校设立前置研判机制（如校园法治委员会），参照立案审查思路对举报材料初步核查，**缺乏事实依据、属于主观臆断、无理纠缠的举报依规不予受理**，不再要求教师投入大量精力配合调查；只有具备初步事实线索的才启动完整调查程序。\n- 收益：前置甄别机制、区分合理监督与恶意骚扰的思路，出自《法治日报》相关报道与评论。相关报道同时强调：**前置甄别不等于拒绝监督**——有事实依据的师德问题线索依旧要严肃核查。\n- 证据等级：D\n- 来源：《法治日报》。<http://h5epaper.legaldaily.com.cn/content/20260926/Articel04004SR.htm> ; 《别让教师自证清白：对恶意诽谤「零容忍」的三条硬制度》。<https://news.qq.com/rain/a/20260908A0BA4J00>\n- 备注：给 D 的原因：**「三类划分」是本书归纳的分析框架，不是官方分类**，来源是媒体的评论与建议（「校园法治委员会」等机制目前多为讨论与地方探索，尚未成为全国统一制度）。写出来是因为**不做这个分类，人就会用对第三类的情绪去应对第一类**——那会让本来能解决的事变得不可收拾。\n\n### 6. 恶意诬告不是「家校矛盾」，它可能有法律责任\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=法律 -->\n\n\n- 成本：不花钱。知道这条法律路径的存在。\n- 说人话：这一条要破除一个很有害的说法：「算了，都是为了孩子」。**捏造事实诬告、恶意诽谤教师，性质上不是家校纠纷。** 官方媒体的表述是：这类行为**可能违反《中华人民共和国治安管理处罚法》，情节严重的还会触犯刑法**；学校调查核实后，如果确认属于捏造事实的恶意诬告，不能止于内部调解，应当固定完整证据、依法移交公安等相关部门，追究举报人的法律责任。\n- 收益：教育部 2026 年 9 月 4 日表态：「对捏造事实、恶意诽谤教师的行为，坚决『零容忍』，将联合相关部门依法严肃处理，追究相关人员责任。」媒体进一步给出法律路径与操作建议（固定证据、依法移交）。\n- 证据等级：A\n- 来源：教育部新闻发布会报道。<https://www.moe.gov.cn/fbh/live/2026/78355/mtbd/202609/t20260907_1449532.html> ; 法律路径见《法治日报》。<http://h5epaper.legaldaily.com.cn/content/20260926/Articel04004SR.htm>\n- 备注：给 A 是因为「零容忍」是教育部的正式表态，而《治安管理处罚法》与刑法的适用是可查的法律路径。**这一条的实际用途不是让你去告谁，而是让你在被反复纠缠时知道「这不是只能忍的事」**——知道有这条路，本身就是一种底气。\n\n### 7. 别在情绪里回家长消息：一个 24 小时规则\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=心理 -->\n\n\n- 成本：不花钱。只要求把一次回复延迟 24 小时。\n- 说人话：这条很短，但可能是这一节最省事的：**任何让你心跳加快的家长消息，不要当场回。** 把它放进草稿，24 小时后再看一遍。绝大多数时候你会发现两件事：一，你不想用原来的措辞了；二，对方在这 24 小时里冷静下来了。**这条规则的成本是延迟一天，收益是不产生一条会被截图、且永远无法收回的消息。** 它的例外只有一种：涉及学生在校安全或紧急情况的，立刻按学校流程处理。\n- 收益：没有研究比较过「延迟 24 小时回复」与「即时回复」在家校沟通中的后果。此条依据的是实务判断：家校纠纷的升级节点往往是**双方的某一条情绪化消息**，而书面消息具有不可撤回、可截图的特性。\n- 证据等级：D\n- 来源：无。本书未找到直接研究，**如实标注为空白**。\n- 备注：给 D 的原因：找不到证据，而且这类研究很难做。写它的理由只有一条——**成本极低、方向不会错、且不可逆。** 这一节前面六条都是「出事之后怎么办」，只有这一条是「让事不出」。\n","07-中小学的升学与评价.md":"# 第 7 节 中小学：升学指标、绩效与那些「上不去」的岗位\n\n**口径**：职业发展／时间与精力\n\n这一节的前提是：**你感受到的「晋升难」，大部分不是个人能力问题，而是岗位结构决定的。** 后半节会用两组数字说明这件事——「高级岗位占比上限」和「正高级的全省总量控制」。理解这两个数，你才能判断自己该走哪条路，而不是在一条本来就极窄的路上反复怀疑自己。\n\n---\n\n### 1. 「三不得一严禁」：升学率不能用来考核教师\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=职业 -->\n\n- 成本：不花钱。\n- 说人话：很多人以为「拿升学率考核老师」只是不提倡。**不是。中央文件里写的是「不得」。** 2020 年 10 月中共中央、国务院印发的《深化新时代教育评价改革总体方案》，在「坚决纠正片面追求升学率倾向」这一条里提出了「三不得一严禁」：**不得下达升学指标或以中高考升学率考核下一级党委和政府、教育部门、学校和教师；不得将升学率与学校工程项目、经费分配、评优评先等挂钩；不得通过任何形式以中高考成绩为标准奖励教师和学生；严禁公布、宣传、炒作中高考「状元」和升学率。** 而且还写了下半句：对教育生态问题突出、造成严重社会影响的，依规依法问责追责。\n- 收益：上述四条出自《深化新时代教育评价改革总体方案》第二部分「重点任务」第 3 条。该方案是「新中国第一个关于教育评价系统性改革的文件」，由中共中央、国务院于 2020 年 10 月印发。\n- 证据等级：A\n- 来源：中共中央、国务院《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm>\n- 备注：给 A 是因为这是中共中央、国务院文件原文，「不得」和「严禁」是可以逐字引用的强制性表述。**这一条在现实中的主要用途是「不接受不合理的考核方式」时有据可依。** 但要诚实地补一句：**文件禁止的是「以升学率考核教师」这个做法，它没有禁止学校关注教学质量。** 所以引用的边界要清楚——你拒绝的是「用升学率给我排名打分」，不是「不看重教学效果」。\n\n### 2. 绩效工资应当向班主任倾斜——这也是写在中央文件里的\n\n<!-- 成本标签: 钱=中 时间=少 毅力=些 收益=中 口径=钱 -->\n\n- 成本：需要主动去核对本校的分配办法。\n- 说人话：班主任的额外工作量有据可查：每周非教育教学工作时间平均 12.30 小时（比普通教师多约 2 小时）。而中央文件对这块的表述是明确的方向性要求：**「完善中小学教师绩效考核办法，绩效工资分配向班主任倾斜，向教学一线和教育教学效果突出的教师倾斜。」** 也就是说，「班主任津贴低」不是只能忍的事——它是政策明确要纠正的。\n- 收益：上述表述出自《深化新时代教育评价改革总体方案》第 10 条「突出教育教学实绩」。班主任非教学工作量数据见北京师范大学蒋艳双等人基于全国 24 万多名中小学教师的调查（《中小学管理》2025 年第 4 期）。\n- 证据等级：A（政策条款）／A（工作量数据）\n- 来源：《深化新时代教育评价改革总体方案》第 10 条。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm> ; 工作量数据见中国青年网引述。<https://news.youth.cn/jsxw/202511/t20251111_16343462.htm>\n- 备注：给 A 是因为两半都有明确出处。**注意一个你可能会用到的细节**：2021 年 11 月公布的《教师法（修订草案）（征求意见稿）》里也写了「绩效工资分配应当坚持多劳多得、优绩优酬，**并体现对优秀教师、班主任等特定岗位教师的激励**」——但那是**征求意见稿，不是生效法律**，引用时请用 2020 年的方案（已印发）而不是那份草案。\n\n### 3. 教学述评制度：每学期对每个学生做学业述评\n\n<!-- 成本标签: 钱=0 时间=大 毅力=是 收益=中 口径=时间 -->\n\n- 成本：每学期对全班每个学生写一次学业述评，是实实在在的工作量。\n- 说人话：这条是一项**新增的、很多人还没当回事的法定工作量**：中央文件提出「探索建立中小学教师教学述评制度，任课教师每学期须对每个学生进行学业述评，述评情况纳入教师考核内容」。翻成日常话：你每学期要给每个学生写一次学业情况评价，而且这件事本身会被计入考核。\n  它同时也是「工作量计入」的依据——同一份文件还明确把参与教研活动、编写教材案例、指导学生毕业设计、就业、创新创业、社会实践、社团活动、竞赛展演等情况**计入工作量**。**这两句要连起来读：既增加了义务，也增加了可折算的工作量。**\n- 收益：上述表述出自《深化新时代教育评价改革总体方案》第 10 条与第 11 条。\n- 证据等级：A\n- 来源：《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm>\n- 备注：给 A 是因为条文明文。**这一条的现实价值主要在「计入工作量」那句**：如果你在做教研、编校本教材、带竞赛、带社团，这些按文件是应当算工作量的。很多学校默认不算——**文件说应当算，这就是可以谈的地方。**\n\n### 4. 「县管校聘」意味着什么：编制在县，岗位在校\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=职业 -->\n\n\n- 成本：不花钱。但需要去查本省的实施办法。\n- 说人话：这项改革改变了一件事：过去编制跟着学校走，现在**编制总量和岗位总量在县级统筹，具体岗位配置到各校，并且实行竞聘上岗**。对你个人来说，实际影响有三条：一是跨校流动变得更常见；二是岗位要「竞聘」而不是自然延续；三是**岗位结构比例是按县核定的，所以隔壁学校的高级岗位多少，会影响到你所在学校的空间**。\n- 收益：以贵州省 2025 年文件为例：中小学教师岗位实行总量控制、动态管理，结合「县管校聘」改革需要，由县人力资源社会保障部门根据编制部门核定的本地区中小学教职工编制总量，按岗位结构比例规定确定岗位总量；由县教育行政部门在核定的岗位总量内，按照学校类型、规模、学科结构、师资需求等将岗位具体配置到各学校。学校新设岗位、出现空缺或其他确需竞聘情形时，采用竞聘上岗方式；对达不到聘用条件的人员可开展专业培训，**培训后仍未达到竞聘上岗条件的，采用降低岗位等级聘用、调离教学一线、调整工作岗位等方式进行调整**。\n- 证据等级：A\n- 来源：贵州省人力资源和社会保障厅、贵州省教育厅《关于进一步做好全省中小学岗位设置管理工作的通知》（黔人社通〔2025〕22 号）。<https://rst.guizhou.gov.cn/zwgk/jdhy/zcwj/202506/t20250630_88207914.html>\n- 备注：给 A 是因为这是省级现行文件，条文可查。**要说明适用范围**：本条的机制细节来自贵州省文件，属于「一省的完整样本」，各省具体比例和程序不同，**你所在省的实施办法要去省人社厅或教育厅官网查**。上面这条的价值是让你知道这套机制长什么样，而不是让你照搬贵州的数字。\n\n### 5. 岗位结构比例：小学高级岗位占比上限 15%——这才是「上不去」的结构性原因\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=职业 -->\n\n\n- 成本：不花钱。查一次本省的结构比例文件。\n- 说人话：这是本节最该看懂的一个数字。中小学教师专业技术岗位分 13 个等级（正高级 1—4 级、副高级 5—7 级、中级 8—10 级、初级 11—13 级），而**不同学段的高级岗位占比上限差别很大**。以贵州省的法定结构比例为例：省级示范性普通高中高级 **≤43%**、其他普通高中 **≤35%**、初级中学 **≤30%**、**小学 ≤15%**、其他幼儿园 **≤10%**。\n  什么意思？**如果你在小学，无论你多优秀，全校也只有约七分之一的岗位能是高级。** 这是结构上限，不是能力问题。安徽省的比例更直观：高中 40:45:15、初中 20:60:20、**小学幼儿园 8:60:32**（高级:中级:初级）——小学幼儿园的高级岗位只有 8%。\n- 收益：贵州省结构比例见黔人社通〔2025〕22 号（小学 ≤15%，初级中学 ≤30%，其他普通高中 ≤35%，省级示范性普通高中 ≤43%，其他幼儿园 ≤10%，市州示范性幼儿园 ≤12%，省级示范性幼儿园 ≤15%）。安徽省比例见芜湖市湾沚区教育局相关答复所引《安徽省事业单位岗位设置管理实施意见》及《关于进一步完善全省教育事业单位岗位设置管理的意见》（皖人社秘〔2016〕317 号）：高中 40:45:15，初中 20:60:20，小学幼儿园 8:60:32。山东省济宁市数据：高中、初中、小学阶段高级比例由 2019 年的 33%、22%、11% 分别提高到 35%、25%、15%。\n- 证据等级：A\n- 来源：黔人社通〔2025〕22 号。<https://rst.guizhou.gov.cn/zwgk/jdhy/zcwj/202506/t20250630_88207914.html> ; 芜湖市湾沚区教育局答复。<https://www.wanzhi.gov.cn/openness/public/6604271/40159339.html> ; 济宁市人社局对市人大建议的答复。<https://www.jining.gov.cn/art/2025/5/23/art_107140_7868.html?xxgkhide=1>\n- 备注：给 A 是因为这些都是各省现行文件里的法定比例，可逐一核对。**这一条的实际用途是救人的**：很多小学教师把「一直评不上高级」理解为自己不够好，而数字说的是——**在 15% 的上限下，绝大多数人注定评不上，这不是个人的失败。** 知道这一点之后，你可以把精力放到别的出口（如第 9 节讲的基层职称、教学成果），而不是年复一年地在一道窄门里消耗。\n\n### 6. 「双减」之后的课后服务：时间从哪里来，边界在哪里\n\n<!-- 成本标签: 钱=0 时间=大 毅力=否 收益=中 口径=时间 -->\n\n- 成本：课后服务本身就占用大量时间。\n- 说人话：课后服务是「双减」的配套安排，也是不少教师工作时长继续拉长的直接原因。政策对它的边界有明确规定：**课后服务应当安排在上课日及完成国家规定课程和学校教学计划之后，结束时间应与当地正常下班时间做好衔接，严禁随意扩大范围。** 这三句是可以用来说事的：**「上课日」「之后」「与当地正常下班时间衔接」「严禁随意扩大范围」。**\n- 收益：上述条文出自 2025 年 11 月《教育部办公厅关于进一步减轻中小学教师非教育教学负担若干措施的通知》第六条「健全教师课后服务保障机制」。\n- 证据等级：B\n- 来源：教育部办公厅《关于进一步减轻中小学教师非教育教学负担若干措施的通知》。<https://www.moe.gov.cn/srcsite/A10/s7058/202511/t20251107_1419596.html>\n- 备注：**给 B 而不是 A 的原因要说清楚**：「条文是原文」（A），但「课后服务是教师工作时长增加的主要原因」这个因果判断本书没有数据支持——教师工作时长的那份调研（60 小时）发生在 2019—2020 年，早于课后服务全面铺开，两者不能直接对接。所以这一条只写条文边界，不断言因果。**「结束时间应与当地正常下班时间做好衔接」这一句值得记住**，它是判断课后服务是否被不合理延长的一个参照。\n\n### 7. 别把学生的分数当成自己的成绩单\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=心理 -->\n\n\n- 成本：不花钱。换一个计算方式。\n- 说人话：这一条是本节唯一一条讲心态的，但它有具体依据：**中央文件已经明确禁止「以中高考成绩为标准奖励教师和学生」**，也就是说，制度层面不再把学生的分数定义为你的产出。既然如此，你在心里也不该继续这么算——因为一旦这么算，**你会为一件制度已经承认不属于你个人功劳（或过失）的事，长期背着情绪债。**\n- 收益：《深化新时代教育评价改革总体方案》明确「不得通过任何形式以中高考成绩为标准奖励教师和学生」。此外文件还规定不得将论文数、项目数、课题经费等科研量化指标与绩效工资分配、奖励挂钩；对高校教师则推行代表性成果评价、探索长周期评价。\n- 证据等级：D\n- 来源：《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm>\n- 备注：给 D 的原因：**「制度不再这么算」是文件原文（A 级），但「所以你也别在心里这么算」是我的推论，没有研究支持。** 写它是因为这一行的情绪消耗很大一部分来自这个等式。**要提醒的是反过来的风险**：不把分数当成自己的成绩单，不等于不认真教——文件否定的只是「用分数奖惩教师」，没有否定「关注教学效果」。\n","08-大学的非升即走.md":"# 第 8 节 大学：非升即走、聘期考核，以及合同上没写清楚的那些\n\n**口径**：职业发展\n\n这一节有一半内容是关于「签合同之前」。原因是：**非升即走的大多数伤害发生在入职之后，但决定权在入职之前。** 一旦签了，改规则的空间很小；而在签之前，你有提问题的权利。\n\n需要先说明本节的证据特点：**政策文件是可核对的（A 级），但「某校淘汰率多少、某校启动经费多少」这类具体案例来自媒体报道与受访者叙述（B 或 C 级），本书会逐条标明。** 不要把个案当成普遍数字引用。\n\n---\n\n### 1. 「非升即走」的政策基础：2018 年中央文件写了什么\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=职业 -->\n\n- 成本：不花钱。\n- 说人话：先弄清这件事的来路。上世纪 90 年代，北京大学、清华大学等院校率先借鉴国外做法探索预聘—长聘制，初衷是打破「能进不能出、能上不能下」的聘任机制，破解「论资排辈」「近亲繁殖」。**真正的制度化起点是 2018 年 1 月中共中央、国务院印发的《关于全面深化新时代教师队伍建设改革的意见》**，其中提出：推行高等学校教师职务聘任制改革，加强聘期考核，**准聘与长聘相结合，做到能上能下、能进能出**。自此，以「非升即走」为特征的预聘—长聘制在各级各类院校铺开。\n- 收益：2018 年 1 月，中共中央、国务院出台《关于全面深化新时代教师队伍建设改革的意见》，提出「推行高等学校教师职务聘任制改革，加强聘期考核，准聘与长聘相结合，做到能上能下、能进能出」。这一表述被普遍视为此后各级各类高校推行预聘—长聘制的政策起点。\n- 证据等级：A\n- 来源：《瞭望》新闻周刊《高校「非升即走」观察》引述该文件。<https://lw.news.cn/2024-05/13/c_1310774421.htm>\n- 备注：给 A 是因为引用的是中央文件原文。**这条最实用的一点是：中央文件要求的是「准聘与长聘相结合」——「相结合」意味着制度设计里应当有长聘这一端，而不是只有淘汰。** 当你所在学校的方案只体现「走」不体现「留」时，这一点可以直接引用。\n\n### 2. 一个编制招十多人：淘汰率极端的机制长什么样\n\n<!-- 成本标签: 钱=0 时间=中 毅力=否 收益=中 口径=职业 -->\n\n\n- 成本：不花钱。看清自己所在位置的竞争强度。\n- 说人话：这是理解「压力从哪来」的关键。**当岗位数量远少于竞争者数量时，考核标准就不再由「你做到了什么」决定，而由「别人做到了什么」决定。** 有报道描述这种形态：一个编制招来 10 多位博士「赛跑」，聘期淘汰率超过 90%，被质疑为「割韭菜」。另有受访者描述某学院两轮考核期淘汰率都可能达到 70%，且因为合同里写的是「择优录取」而非明确指标，必须与同批入职的 10 人「无上限竞争」。\n- 收益：供给端数据：2023 年高等教育专任教师 207 万人，同比增长 4.91%；同年我国在学博士生 61.25 万人，同比增长 10.14%，且还在不断扩招。北京师范大学高等教育研究所李奇教授指出，「现在是买方市场，青年没有选择，要么接受，要么再见，高校处于绝对优势地位」。《经济日报》评论提到「有的高校聘期淘汰率超过 90%，1 个编制要招来 10 多位博士『赛跑』」。\n- 证据等级：B\n- 来源：中国网《做不成副教授就去做行政、后勤？高校「非升即走」浮云与真相》（转央视网微信公号）。<https://news.china.com.cn/2024-05/16/content_117191289.shtml> ; 《「非升即走」将走向何方》（经济日报）。<http://paper.ce.cn/pc/attachment/202508/24/921e9285-38d7-4217-b887-3cbd07b6cc1b.pdf>\n- 备注：给 B 的原因：**「90%」「70%」这些比例来自媒体报道与受访者叙述，不是官方统计，各校差异极大且会逐年变化，不要当成本校的真实数字引用。** 但「博士招生增速 > 教师岗位增速 → 竞争加剧」这个结构性判断是可以用公开数据支撑的。**这一条的价值在于让你知道：考核标准高低不是环境变量，它本身就是竞争强度的函数。**\n\n### 3. 中途改规则：这是最该被记下来的一种风险\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=职业 -->\n\n\n- 成本：不花钱。把口头要求转成书面确认，一封邮件的时间。\n- 说人话：媒体报道中反复出现的一类情形是：**签合同、签任务书之后，学校追加了更高的要求或变更了标准。** 有一位受访青年教师的说法是，原本要求的 4 篇论文改成 5 篇，国家课题「立项」改成「项目经费全部到账」，而考核标准最初只是口头通知。另有报道提到，有教师的论文已被接收、在等待见刊期间，因见刊时间晚于任务书约定的聘期时间而未能通过考核。\n- 收益：上述情形来自《瞭望》新闻周刊与央视网系列的采访报道。同一报道中，受访者指出，「现有机制下，青年教师对此几乎没有话语权」。相对正面的对照是：香港某公立大学在教师入校后通过听证会等渠道征求「非升即走」教师对考核标准的意见，明确论文、项目、教学、行政等诸项指标；受访教师评价「可以畅所欲言，挺好」。\n- 证据等级：B\n- 来源：《瞭望》新闻周刊。<https://lw.news.cn/2024-05/13/c_1310774421.htm> ; 中国网（转央视网）。<https://news.china.com.cn/2024-05/16/content_117191289.shtml>\n- 备注：给 B 的原因同上——**个案叙述，非统计数据。** 但这一条的行动含义很清楚：**凡是口头的考核要求，都要尽快变成书面。** 具体做法：把人事部门或学院口头说明的指标，用邮件回执方式确认一遍（「根据刚才的沟通，我理解考核要求是……，如有出入请指正」）。**这一步的意义不是防人，是留下双方共同认可的时间点**——日后若有分歧，这条邮件决定了「当时的约定是什么」。\n\n### 4. 政策正在转向：多所高校已明确「无非升即走」\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=职业 -->\n\n- 成本：不花钱。\n- 说人话：这是本节唯一一条好消息，而且它不是风向，是有具体文件和时间点的。**2025 年 10 月 24 日，教育部等六部门联合印发《关于加强新时代高校青年教师队伍建设的指导意见》**，明确提出要「完善高校教师评价改革，加大对青年教师的引导支持力度」。同期，中国海洋大学、南京信息工程大学等高校在招聘公告中明确标注「不实行竞争性淘汰」「无非升即走」。复旦大学校长金力在 2025 年春季工作会议上指出，长聘体系的核心并非「非升即走」，而在于选拔最具内驱力和发展潜力的优秀人才；他在接受采访时强调，**如今的聘任机制已不再预设淘汰比例，只要教师足够优秀，就有机会留下来。**\n- 收益：上述文件、高校公告与校方表态均有公开来源。报道同时提醒一个现实：**「取消非升即走」不等于回到「铁饭碗」**——几乎所有高校仍与新进教师约定明确的首聘期（通常 3 至 5 年）并设定科研、教学任务；若考核未达标，虽然可能不会如典型「非升即走」那样直接解聘，但会面临绩效扣减、职称晋升受阻、岗位调整（转岗或低聘）乃至影响续聘的后果。一个普遍存在的表述是「非达标即走」。\n- 证据等级：A\n- 来源：华声在线（湖南日报）《当高校纷纷告别「非升即走」，青年教师的职业安全感来了吗？》。<https://m.voc.com.cn/xhn/news/202512/31170909.html>\n- 备注：给 A 是因为六部门文件、高校公开公告、校方公开表态都可核对。**「不等于回到铁饭碗」这半句是这条里最有价值的部分**——它说明政策转向改变的是「淘汰的形式」（从直接解聘转向降薪、转岗、低聘），不完全等于风险消失。**读招聘公告时请分清「不实行竞争性淘汰」和「无非升即走」的差别**：前者说的是淘汰方式，后者说的是有没有这道关。\n\n### 5. 2020 年指导意见：考核周期应当科学设置、适当延长\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=职业 -->\n\n- 成本：不花钱。\n- 说人话：有一条可以引用的具体要求：**2020 年底，人力资源社会保障部、教育部印发《关于深化高等学校教师职称制度改革的指导意见》，要求科学合理设置考核评价周期，适当延长基础研究人才、青年人才等考核周期。** 这句话对做基础研究、长周期研究的人尤其重要——它说明「用短周期考核长周期研究」在政策上是不被主张的。同一份中央文件还写了一句更根本的判断：**「学术是长期工作，不是竞技体育」**（这是《瞭望》报道中的引述语境）。\n- 收益：《深化新时代教育评价改革总体方案》（2020 年 10 月）规定：不得将论文数、项目数、课题经费等科研量化指标与绩效工资分配、奖励挂钩；推行**代表性成果评价，探索长周期评价**，完善同行专家评议机制；对取得重大理论创新成果、前沿技术突破、解决重大工程技术难题、在经济社会事业发展中作出重大贡献的，**申报高级职称时论文可不作限制性要求**。2020 年底人社部、教育部《关于深化高等学校教师职称制度改革的指导意见》进一步要求「科学合理设置考核评价周期，适当延长基础研究人才、青年人才等考核周期」。\n- 证据等级：A\n- 来源：《深化新时代教育评价改革总体方案》第 12 条。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm> ; 人社部、教育部指导意见见《瞭望》引述。<https://lw.news.cn/2024-05/13/c_1310774421.htm>\n- 备注：给 A 是因为两份文件都是已印发的正式文件、条文可查。**这一条最硬的一句是「论文可不作限制性要求」**——它有明确适用条件（取得重大理论创新成果、前沿技术突破、解决重大工程技术难题、重大贡献），不是普适豁免。**不要把它理解成「一定可以不交论文」，而是要理解成：制度上留了「以代表性成果替代论文」的口子，这个口子怎么用取决于本校细则。**\n\n### 6. 「非升即转」：转岗不等于失败，但要看清转去哪\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=职业 -->\n\n\n- 成本：不花钱。看清合同里「出口」是怎么写的。\n- 说人话：近年的一个变化是「非升即走」出现了变体：**「非升即转」——做不成副教授，就去做行政、后勤**（媒体表述）。这件事要分开看：一方面，有报道指出部分高校把转岗作为解除聘用的替代方案，甚至出现「中途改变聘期前约定的晋升标准」的做法；另一方面，也有受访者的经历完全是另一番样子——有教师在短聘期内完成指标，拿着三四十万年薪和人才补贴，剩余时间「带薪骑驴找马」，后来离开高校到企业做工程师、投资顾问，发现工资比留在高校还高出超过 20%，于是不再打算回去。\n- 收益：上述正反两类经历均来自中国网（转央视网）的采访报道。<https://news.china.com.cn/2024-05/16/content_117191289.shtml>\n- 证据等级：B\n- 来源：同本节第 3 条。\n- 备注：给 B 的原因同上（个案叙述）。**这一条的作用是把「转岗/离开」从失败叙事里拿出来。** 需要提醒的是那句「带薪骑驴找马」有一个前提：**他的聘期是明确 3 年的短聘合同，且学校确实给了承诺的待遇。** 也就是说，这条路能不能走通，取决于合同里有没有把「条件」和「出口」写清楚——这正好指向本节第 7 条。\n\n### 7. 签合同之前必须问清的六个问题\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=职业 -->\n\n- 成本：一次面谈的时间。\n- 说人话：这是本节最该带走的一条。**这六个问题不要口头问，要写成书面清单，把答复记录下来：**\n  **一、考核期的准确起止日期是什么**（从入职日算、从签订任务书日算，还是从取得博士学位日算）？\n  **二、指标是「达到即通过」还是「择优录取」**？如果是后者，同一批次招了几个人、准备留几个？\n  **三、指标变更的程序是什么**？谁有权改、要不要经过你书面同意？\n  **四、启动经费多少、什么时候到账、可以用于什么**？\n  **五、「未达标」的具体后果分几种**（不续聘／转岗／低聘／绩效扣减）？各自触发条件是什么？\n  **六、如果结果是转岗，转到什么岗位、待遇怎么算**？\n- 收益：这些问题直接对应媒体报道中反复出现的争议点：考核标准中途变更、指标表述为「择优录取」而无明确数量、启动经费不足（有受访者提到「启动金不到六万」，需通过私人关系联系实验资源）、以及「非升即转」后去向不明。**现行政策也要求评价应当科学、周期合理（《深化新时代教育评价改革总体方案》、人社部与教育部 2020 年指导意见），所以这些问题都是可以正当提出的。**\n- 证据等级：D\n- 来源：争议点来自《瞭望》新闻周刊与中国网（转央视网）报道。<https://lw.news.cn/2024-05/13/c_1310774421.htm> <https://news.china.com.cn/2024-05/16/content_117191289.shtml> ; **「六个问题清单」这个具体做法是本书整理的，没有条文或研究背书，故本条标 D**\n- 备注：给 D 的原因：**问题是真实的（有报道支撑），但清单是我汇总的，不是规定动作。** 之所以排到最后一节之外单独列，是因为**它是这一节里唯一一件「做了就不可逆、没做就无法挽回」的事**——其他条都可以入职后慢慢应对，只有签合同这一步过了就没有第二次机会。**一个现实提醒**：如果对方不愿把答复写成文字，这件事本身就是一条重要信息。\n","09-职称与晋升.md":"# 第 9 节 职称与晋升：两套完全不同的规则\n\n**口径**：职业发展\n\n这一节的第一个结论可能会让一些人意外：**中小学和高校的职称，是两套几乎不重叠的规则。** 岗位结构、评价标准、评审主体、晋升瓶颈全都不一样。所以「教师晋升难」这个笼统的说法没有用——**你得先说清自己是哪一套。**\n\n第二个结论是：两套规则近年都在改，而且改的方向对你有利（破「五唯」、分类评价、代表性成果）。**但改的方向和本校细则之间有一段距离，差距在哪需要你自己去查。**\n\n---\n\n### 1. 中小学和高校，是两套完全不同的规则\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=职业 -->\n\n- 成本：不花钱。\n- 说人话：三条区别，记住就行。**一是评价主体不同**：中小学教师职称评审由地方人社与教育部门组织，高校则按国家规定自主评聘。**二是瓶颈不同**：中小学的主要瓶颈是**岗位结构比例**（高级岗位占比有硬上限，见本节第 2 条）；高校的主要瓶颈是**聘期考核**（非升即走、预聘—长聘）。**三是「卡点」不同**：中小学常卡在「有资格但没岗位」（评聘分离、按岗聘用）；高校常卡在「达到指标但没名额」。\n  所以当你听到同事抱怨「评不上」，先分清他卡在哪一层——**是没评上（评价标准问题），还是评上了但聘不上（岗位结构问题）。** 这两件事的解法完全不同。\n- 收益：中小学实行岗位管理制度，专业技术岗位分 13 个等级（正高级 1—4 级、副高级 5—7 级、中级 8—10 级、初级 11—13 级），各学段高级岗位结构比例有法定上限；高校职称按《关于深化高等学校教师职称制度改革的指导意见》（人社部、教育部，2020 年底）实行分类评价与自主评聘改革。\n- 证据等级：A\n- 来源：岗位等级与结构比例见黔人社通〔2025〕22 号。<https://rst.guizhou.gov.cn/zwgk/jdhy/zcwj/202506/t20250630_88207914.html> ; 高校职称改革见《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm>\n- 备注：给 A 是因为两套制度都由现行文件规定、可查。**「有资格但没岗位」是中小学职称中最常见的实际卡点**，对应的机制是「评聘分离、按岗聘用」——学校评上了你的资格，但如果没有对应的空岗，就不能聘。**所以中小学教师打听消息时最该问的不是「标准是什么」，而是「今年有没有空岗」。**\n\n### 2. 正高级教师：全省中小学教师岗位总量的千分之五以内\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=职业 -->\n\n\n- 成本：不花钱。查一次本省正高级岗位的总量控制口径。\n- 说人话：这是全书最该让中小学教师看懂的一个数字。**正高级教师岗位数量实行全省总量控制，除国家另有规定外，在全省中小学教师岗位总量的千分之五以内。** 千分之五是什么概念？**每 200 名中小学教师里，大约只有 1 个正高级岗位。** 各学段的比例也不一样——以山东济宁为例，高中、初中、小学的正高级比例分别是 3%、2%、1%（这里指的是高级岗位内部的正高占比）。\n  **这不是「努力就能达到」的量级，这是一道筛子的孔径。** 知道这一点，你才能在「要不要为了正高把接下来的十年全押上」这个问题上，做出清醒的选择。\n- 收益：贵州省规定：正高级教师岗位数量实行全省总量控制；除国家另有规定外，在全省中小学教师岗位总量的**千分之五以内**，正高级教师岗位聘用不受单位结构比例限制。山东省济宁市数据：高中、初中、小学阶段学校专业技术岗位高级比例由 2019 年的 33%、22%、11% 分别提高到 35%、25%、15%，**其中正高级比例为 3%、2%、1%**。\n- 证据等级：A\n- 来源：黔人社通〔2025〕22 号。<https://rst.guizhou.gov.cn/zwgk/jdhy/zcwj/202506/t20250630_88207914.html> ; 济宁市人社局对市人大建议的答复。<https://www.jining.gov.cn/art/2025/5/23/art_107140_7868.html?xxgkhide=1>\n- 备注：给 A 是因为两处都是现行文件中的明确数字。**这里必须说清楚两个不同口径，别混用**：贵州的「千分之五」是**全省中小学教师岗位总量**中的正高占比（总量控制）；济宁的 3%/2%/1% 是**该学段高级岗位内部**的正高占比。两者分母不同，不能直接比较。**这个区别很重要**——网上大量文章把这两个数字混着用，结论就错了。\n\n### 3. 基层职称「定向评价、定向使用」：机会明确，代价也要看清\n\n<!-- 成本标签: 钱=中 时间=中 毅力=些 收益=大 口径=职业 -->\n\n\n- 成本：服务期内不能调动、不能再申报其他系列职称——这是主要代价。\n- 说人话：如果你在乡村或薄弱学校任教，这是最值得了解的一条通道。机制是设立「定向评价、定向使用」的基层中小学教师职称，**实行总量控制、比例单列、专岗专用，不受学校岗位总量、最高等级和结构比例限制**，与常设岗位分开设置、单独管理。有的地方条件还比较宽：在乡镇事业单位从事基层专业技术工作 10 年以上申报中级、20 年以上申报副高级、30 年以上申报正高级，可不受单位岗位结构比例限制。\n  **代价必须同时看**：取得基层职称后**实行「定向评价、定向使用、定期服务」，不占设岗学校专业技术岗位结构比例，仅限在设岗学校聘任**，服务期内不得再申报参与全省统一或基层教师系列职称评审，**不得调动到非设岗学校**。以湖南沅江为例，基层中级、高级、正高级教师职称的服务期分别是 4 年、5 年、6 年；服务期满且考核合格、完成继续教育的，经评审认定后才能换发全省统一的职称证书。\n- 收益：贵州省、山东济宁市、湖南沅江市的相关文件均有明确规定。济宁自 2019 年以来已有 1 万余名基层中小学教师经评审取得基层高级职称。\n- 证据等级：A\n- 来源：黔人社通〔2025〕22 号。<https://rst.guizhou.gov.cn/zwgk/jdhy/zcwj/202506/t20250630_88207914.html> ; 济宁市人社局答复。<https://www.jining.gov.cn/art/2025/5/23/art_107140_7868.html?xxgkhide=1> ; 沅江市 2025 年度基层中小学教师职称评审岗位设置方案。<http://yuanjiang.gov.cn/20914/content_2099643.html>\n- 备注：给 A 是因为三地文件都把条件与约束写得很具体。**这条最该被看懂的是那个「锁」**：定向职称在服务期内不能调动、不能再申报其他系列职称。**它对「打算长期留在本地」的人是实实在在的机会，对「准备几年后调走」的人则可能是个限制。** 选择之前一定把本省文件里的服务期和换证条件读完整——上面这三个地区的规定都不一样。\n\n### 4. 山东的课时量公示备案：课上的不够，不能申报高一级职称\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=职业 -->\n\n- 成本：不花钱。核对一下自己的课时记录。\n- 说人话：这是一条容易被忽略但很硬的门槛：**建立教师课时量公示备案制度，课时量达不到省定最低标准和教学实绩长期较差的，不得申报高一级专业技术职称。** 换句话说，「上课不够」是硬伤，光靠论文和荣誉补不上。同时它也给了一个反向的好处：**这条和「绩效工资向教学一线倾斜」是配套的——课时量被正式承认为硬指标，意味着教学投入有了制度性的回报路径。**\n- 收益：山东省《关于进一步深化中小学教师职称评聘改革的意见》（鲁教师发〔2023〕1 号）的相关规定，以及配套做法：突出教育教学能力、教学效果、岗位业绩贡献，将认真履行教育教学职责作为评价教师的基本要求；切实克服唯学历、唯资历、唯论文等倾向，完善代表性成果制度，**教育教学成果、课题研究、教案、理论文章等业绩成果均可作为代表性成果参加职称评审**；在中小学教师系列职称评审增加说课环节，对正高级等特殊申报人员增加面试答辩环节。\n- 证据等级：A\n- 来源：济宁市人社局对市人大建议的答复（引述鲁教师发〔2023〕1 号）。<https://www.jining.gov.cn/art/2025/5/23/art_107140_7868.html?xxgkhide=1>\n- 备注：给 A 是因为这是省级现行文件的规定。**「教案也可以作为代表性成果」这一点过去被很多教师忽略**——它的意思是，你精心备的课、写的教学设计本身就有申报价值，不必都换算成论文。这对教学型教师是一条很实际的路径。\n\n### 5. 高校「破五唯」之后，替代标准是什么\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=职业 -->\n\n\n- 成本：不花钱。对照本校细则，找可用的替代路径。\n- 说人话：「破五唯」容易造成一个误解，以为标准没了。**其实文件给了替代方案**：一是**代表性成果评价**（不数数量，看代表作）；二是**分类评价**（按学科、岗位特点分开评）；三是**长周期评价**（对基础研究不放短周期考核）；四是**同行专家评议**。另外还有几条明确的「不得」：**不得将论文数、项目数、课题经费等科研量化指标与绩效工资分配、奖励挂钩**；**不得将国（境）外学习经历作为教师聘用和职称评聘的限制性条件**；不得把人才称号作为承担科研项目、职称评聘、评优评奖、学位点申报的限制性条件。\n- 收益：上述内容出自《深化新时代教育评价改革总体方案》第 12、13 条。同文件还规定：对取得重大理论创新成果、前沿技术突破、解决重大工程技术难题、在经济社会事业发展中作出重大贡献的，**申报高级职称时论文可不作限制性要求**。实践中的探索案例包括：复旦大学给会讲课、有代表作的青年教师晋升机会；中国人民大学退出以论文影响因子为指标的高校排名；中国农业大学校长提出放弃高压的竞争与淘汰政策。\n- 证据等级：A\n- 来源：《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm> ; 案例见中国网（转央视网）报道。<https://news.china.com.cn/2024-05/16/content_117191289.shtml>\n- 备注：给 A（条款）/ B（案例）。**这一条最实用的是「不得将论文数、项目数、课题经费等科研量化指标与绩效工资分配、奖励挂钩」**——如果你所在单位把论文数和绩效工资直接挂钩，这一点是可以提出来讨论的。**但要诚实**：文件禁止的是「与绩效工资分配、奖励挂钩」，不禁止「在职称评审中参考论文」。这两件事不同。\n\n### 6. 一条容易被忽略的硬门槛：高校青年教师晋升要有学生工作经历\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=职业 -->\n\n- 成本：一年担任辅导员、班主任的经历。\n- 说人话：这条很多人到申报时才发现：**高校青年教师晋升高一级职称，至少须有一年担任辅导员、班主任等学生工作经历。** 它写在中央文件里，不是某校自定的。**对在站或刚入职的青年教师，这条的实际含义是：那一年的学生工作要提早安排，别等到考核期快结束了才想起来。**\n- 收益：《深化新时代教育评价改革总体方案》第 11 条「强化一线学生工作」：各级各类学校要明确领导干部和教师参与学生工作的具体要求；落实中小学教师家访制度，将家校联系情况纳入教师考核；**高校青年教师晋升高一级职称，至少须有一年担任辅导员、班主任等学生工作经历。**\n- 证据等级：A\n- 来源：《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm>\n- 备注：给 A 是因为条文明确、可核对。**这条同时说明了一件事**：政策并不是只把青年教师往论文上逼——同一条还要求「完善学校党政管理干部选拔任用机制，原则上应有思政课教师、辅导员或班主任等学生工作经历」。**学生工作经历在这套制度里是被承认的能力项，不是浪费时间的杂事。** 用它和「破五唯」一起读，你就知道制度设计的方向是什么。\n\n### 7. 不要把职称评审当成对你人生的评价\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=心理 -->\n\n\n- 成本：不花钱。但要接受「评不上」和「不够好」是两件事。\n- 说人话：把本节第 2 条的两个数字放在这里用一次。**当你知道小学的高级岗位上限是 15%、正高级是全省千分之五时，「没评上」这件事的含义就变了**——它更可能说明你排在一个孔径很小的筛子后面，而不是说明你不够好。区分这两件事有一个很实际的检验方法：**把「我评上了什么」换成「我这五年做成了什么」，如果后者的清单不是空的，那职称没评上就只是一次排位，不是一次判决。**\n- 收益：本节的数据（小学高级岗位 ≤15%、正高级全省总量千分之五以内）表明中小学职称晋升受法定的岗位结构比例与总量控制限制，属结构性稀缺，而非单纯的个人能力差异。\n- 证据等级：D\n- 来源：结构比例数据见黔人社通〔2025〕22 号（A 级）；**「换个说法能减轻伤害」这一主张没有研究支持，故本条标 D**\n- 备注：给 D 的原因：**数字是 A 级的，心理结论是 D 级的，请这样拆开用。** 这一条写在这里，是因为评审季的心理消耗是真实的，而消耗的来源往往是一个错误的等式（职称 = 我的价值）。**这一节前面六条都是在教你「怎么做」，只有这一条在说「做不成也不等于什么」。两者都需要。**\n","10-平台不足怎么办.md":"# 第 10 节 平台不足：弱势院校教师的现实策略\n\n**口径**：职业发展／专业能力\n\n这一节写给一类具体的人：**你在的地方没有国家重点实验室，没有大型仪器，启动经费是六位数里的低端，考核标准却照着「双一流」抄。**\n\n先说清楚这一节的证据状况：**「平台不足该怎么办」这类问题，没有随机试验，也不会有。** 所以这一节的 D 级条目比例会明显高于前面几节。我会把「有出处的事实」（如文件规定了什么、报道里受访者遇到了什么）和「我的判断」严格分开标注。**请把 D 级条目当成「值得考虑的选项」，不是「被验证的方法」。**\n\n---\n\n### 1. 先承认现实：启动经费 6 万和 60 万，是两种不同的游戏\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=职业 -->\n\n- 成本：不花钱。但需要承认一件不太舒服的事。\n- 说人话：**把「平台不足」当成态度问题而不是条件问题，是最消耗人的一种误判。** 有受访青年教师在报道中描述过具体的处境：在缺乏研究资源、启动金不到六万的情况下，需要「又是通过私人关系联系实验资源，又是年年练习写本子」；也有报道提到某二本院校要求 4 年首聘期内完成 2 篇核心期刊论文和 1 个省级项目，重庆某院校还提出至少 12 万横向课题经费的要求，且一旦完不成指标「还可能倒赔钱」。**这些不是一个数量级的差异，是两种不同的游戏规则。** 承认它是两种游戏，才能开始做策略选择，而不是年复一年地在「我是不是不够努力」上消耗。\n- 收益：上述个案来自中国网（转央视网微信公号）《做不成副教授就去做行政、后勤？高校「非升即走」浮云与真相》的采访报道。<https://news.china.com.cn/2024-05/16/content_117191289.shtml>\n- 证据等级：B\n- 来源：同上。\n- 备注：给 B 的原因：**个案、非统计，不能代表你所在学校的情况。** 「启动金不到六万」是一位受访者的具体数字，不是全国平均数。**这一条的用途是纠偏，不是对比**——它的目的是让你停止用一个不属于你的量级来评价自己。\n\n### 2. 用「合作」换平台：你手里得有别人没有的东西\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=能力 -->\n\n- 成本：需要主动联系、可能要接受做「子问题」而不是主导。\n- 说人话：没有设备的时候，**唯一能拿上桌的东西是别人没有的数据、场景或问题。** 弱势院校的教师往往有一样东西是大校团队缺的：**一线的真实场域**（特定类型学校的课堂、某一个地方病种的病例、某个县城的完整样本、某类企业车间的实际工况）。所以合作的正确姿势不是「我想用你们的仪器」，而是「我这里有你们拿不到的数据，我们要不要一起做一个问题」。**主动联系的成本是几封邮件，而不联系的代价是几年时间。**\n- 收益：没有研究比较过不同合作策略的成功率。相关的间接依据是：《深化新时代教育评价改革总体方案》提出「完善同行专家评议机制，**注重个人评价与团队评价相结合**」——也就是说制度上承认团队合作的成果，不要求每项成果都由个人独立完成。这是你把合作成果写进考核材料时的政策依据。\n- 证据等级：D\n- 来源：《深化新时代教育评价改革总体方案》第 12 条（团队评价条款，A 级）。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm> ; **合作策略本身无研究支持，故本条标 D。**\n- 备注：给 D 的原因：**策略是判断，不是结论。** 提示：「注重个人评价与团队评价相结合」这一句在写考核材料时很有用——合作论文里你的贡献需要你在材料里自己讲清楚，而制度是承认团队成果的。\n\n### 3. 横向课题：它是钱，也是负担\n\n<!-- 成本标签: 钱=中 时间=大 毅力=是 收益=中 口径=钱 -->\n\n\n- 成本：投入大量时间做交付，而它挤占的正是能出论文的时间。\n- 说人话：有些院校把横向课题经费写进了考核指标（如前文提到的「至少 12 万横向课题经费」）。**接横向是一条真实的路，但要算清两笔账**：一笔是钱——经费规模通常不大，且要投入大量时间做交付；另一笔是时间——横向项目的交付周期和学术产出周期不匹配，**它挤占的恰恰是能出论文的时间**。所以要不要接，取决于你的考核表里「经费」和「论文」哪一项更缺、更急。\n- 收益：横向课题被写入考核指标的情形见中国网（转央视网）报道。<https://news.china.com.cn/2024-05/16/content_117191289.shtml> ; 逆向的政策依据是《深化新时代教育评价改革总体方案》第 12 条明确「不得将论文数、项目数、课题经费等科研量化指标与绩效工资分配、奖励挂钩」——**注意它限制的是「与绩效工资分配、奖励挂钩」，未禁止在职称评审中参考。**\n- 证据等级：B\n- 来源：同上。\n- 备注：给 B 的原因：**「有院校这么做」是报道事实，「该不该接」是你要自己算的题。** 这里有一条实用提醒：**横向合同在签署前应当通过学校科研管理部门，并明确经费到账时间、成果归属和知识产权条款**——有报道提到考核口径从「立项」改成「经费全部到账」，这类变更对横向项目的影响尤其大。\n\n### 4. 选对一篇，比多发三篇更划算\n\n<!-- 成本标签: 钱=0 时间=大 毅力=是 收益=中 口径=职业 -->\n\n\n- 成本：把有限资源集中在少数方向，要承担「鸡蛋放一个篮子」的风险。\n- 说人话：在资源少的情况下，**广种薄收是劣势策略**——因为你没有足够资源去覆盖多个方向。政策给的出路是「代表性成果评价」：不数数量，看代表作。**这意味着把有限的资源集中在一两个能做出辨识度的问题上，比铺开摊子更符合评价方向。** 一个可操作的检验：**让你列出三篇最能代表你的作品，如果列出来之后你自己都觉得「这几篇之间没有关系」，那说明方向太散。**\n- 收益：《深化新时代教育评价改革总体方案》提出「突出质量导向，重点评价学术贡献、社会贡献以及支撑人才培养情况」；「坚持分类评价，推行**代表性成果评价**，探索长周期评价，完善同行专家评议机制」。相关专家意见指出，长时间高强度「内卷」会让青年教师陷入职业倦怠，背离科学研究的初心。\n- 证据等级：C\n- 来源：《深化新时代教育评价改革总体方案》第 12 条。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm> ; 专家意见见《瞭望》新闻周刊。<https://lw.news.cn/2024-05/13/c_1310774421.htm>\n- 备注：给 C 的原因：**「推行代表性成果评价」是文件明文（A 级），但「集中方向比分开发表更划算」是我的推论**，而且它可能不适用于所有学科（有些领域的高产出本身就是信号）。所以标 C——方向大致可靠，但别当铁律。**尤其注意：在还没建立起学术辨识度的头几年，集中方向的风险是「把鸡蛋放一个篮子」，这个风险要你自己评估。**\n\n### 5. 教学成果奖与教材建设奖：少数能和大校同台的赛道\n\n<!-- 成本标签: 钱=0 时间=大 毅力=是 收益=中 口径=职业 -->\n\n\n- 成本：材料准备与打磨的时间，通常以年计。\n- 说人话：如果科研赛道上平台差距太大，有一条政策明确支持、且不太吃设备的赛道：**教学成果与教材建设。** 中央文件要求「完善国家教学成果奖评选制度，优化获奖种类和入选名额分配」，「实施教材建设国家奖励制度，每四年评选一次」。**这两项的评价对象是教学本身，跟你有没有大型仪器没有关系。** 对教学型教师和弱势院校教师，这是政策留出来的一条现实通道。\n- 收益：相关条款出自《深化新时代教育评价改革总体方案》第 10 条：「支持建设高质量教学研究类学术期刊，鼓励高校学报向教学研究倾斜。完善教材质量监控和评价机制，实施教材建设国家奖励制度，每四年评选一次，对作出突出贡献的教师按规定进行表彰奖励。完善国家教学成果奖评选制度，优化获奖种类和入选名额分配。」\n- 证据等级：A（政策条款）/ C（「这条赛道更公平」这一判断）\n- 来源：《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm>\n- 备注：**要分开看两半**：政策确实在加强教学成果与教材的奖励地位（A 级）；但「它更公平」是我的判断——评奖同样存在资源与人脉因素，只是**它对硬件平台的依赖度低于自然科学基金类项目**，这一点是合理的判断。此外同条还明确「把参与教研活动，编写教材、案例，指导学生毕业设计、就业、创新创业、社会实践、社团活动、竞赛展演等情况计入工作量」——**即使拿不到奖，这些工作也应当计入工作量，这是可以主张的。**\n\n### 6. 把平台限制写进研究设计，而不是写进抱怨\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=能力 -->\n\n\n- 成本：选题阶段多花时间做一次可行性评估。\n- 说人话：这是本节唯一一条「技术性」建议：**既然你的条件是已知的，就把它变成一个设计约束，而不是一个失败理由。** 具体就是：选题时优先选择**不依赖大型设备**的问题类型——分析性研究、二次数据挖掘、系统评价与元分析、真实世界数据研究、质性研究、教学干预研究、地方性/区域性研究。**这些方向的共同特点是：主要成本是时间与设计能力，不是设备。** 反过来，明知需要大设备却硬选那个方向，是在用别人的规则惩罚自己。\n- 收益：没有研究比较过不同选题策略在弱势院校环境下的产出效率。可援引的间接依据是《深化新时代教育评价改革总体方案》提出的「坚持分类评价」「根据不同学科、不同岗位特点」——制度层面对评价标准差异化的承认。\n- 证据等级：D\n- 来源：《深化新时代教育评价改革总体方案》（分类评价条款，A 级）。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm> ; **选题策略本身无研究支持，故本条标 D。**\n- 备注：给 D 的原因同上。**这一条的价值在于它把「抱怨」换成了「约束下的设计」**——前者消耗心力且不产出，后者至少产出成果。需要注意的反面：**分类评价目前是政策方向，各校细则未必跟上**。所以「选择不依赖设备的方向」之前，先确认本校考核表是否真的按分类评价执行——如果考核表仍然只看 SCI 分区，那这个策略就要重新算。\n\n### 7. 别用大校的考核标准惩罚自己\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=心理 -->\n\n\n- 成本：不花钱。只要求你换掉比较的对象。\n- 说人话：这一条是本节的落点。**同一套量化标准，放在一所平台齐全的学校和一所什么都没有的学校，含义完全不同**；但被套用的往往是同一张表。在此之上，还有一层结构性的现实需要知道：**博士供给的增长快于高校岗位的增长**（2023 年高等教育专任教师同比增长 4.91%，而在学博士生同比增长 10.14%），这意味着**竞争强度会继续上升，而这不是你个人能改变的部分。** 能改变的是你选哪套标准来评价自己。\n- 收益：供给端数据（专任教师 207 万人／+4.91%，在学博士生 61.25 万人／+10.14%）来自中国网（转央视网）报道引用的统计。<https://news.china.com.cn/2024-05/16/content_117191289.shtml> ; 专家观点：学术是长期工作，不是竞技体育（北京师范大学高等教育研究所李奇教授，《瞭望》报道）。\n- 证据等级：D\n- 来源：同上（数据为 B 级）；**「换一套自我评价标准」的主张无研究支持，故本条标 D。**\n- 备注：给 D 的原因：**数据和专家观点都是真的，但「所以你要换标准」是一个价值判断，不是研究结论。** 写它是因为这一节前面六条都在讲方法，而方法的前提是心力——**心力被错误的比较耗尽之后，再好的策略也没有力气执行。** 所以这一条不是心灵鸡汤，它是前面六条的运行前提。\n","11-钱编制与维权.md":"# 第 11 节 钱、编制，与维权：写在法条上的那些保障\n\n**口径**：收入与待遇／法律与权益\n\n这一节的特点是：**大部分内容是可查的法条，而不是经验。** 所以它的 A 级条目比例是全书最高的。这也意味着——**当你和学校之间出现待遇、待遇落实、申诉这类分歧时，这一节里的条文是你可以直接引用的。**\n\n一个前提说明：本节引用的《中华人民共和国教师法》**现行有效版本是 1994 年 1 月 1 日施行、2009 年 8 月 27 日修正的版本**。2021 年公布的修订草案**尚未生效**，凡是涉及草案的内容，本节都会明确标注。\n\n---\n\n### 1. 「不低于当地公务员」是法定的，而且有实名举报平台\n\n<!-- 成本标签: 钱=大 时间=少 毅力=些 收益=大 口径=钱 -->\n\n- 成本：不花钱。\n- 说人话：这句话不是口号，是法条。《教师法》第二十五条规定：**「教师的平均工资水平应当不低于或者高于国家公务员的平均工资水平，并逐步提高。建立正常晋级增薪制度。」** 更实用的是后半条：**2020 年 7 月 1 日起，国务院教育督导委员会办公室开通了「义务教育教师平均工资收入水平不低于当地公务员平均工资收入水平举报平台」，义务教育教师平均工资低于当地公务员可以实名举报。**\n  这条的实际用途很明确：**当你发现本地公务员发了某笔钱而教师没发时，你不是只能忍着或只在私下抱怨——有一个专门的、国务院层面的举报入口。**\n- 收益：《教师法》第二十五条。此外，2021 年国务院《关于教师队伍建设和教师法实施情况的报告》指出，全国 2846 个县根据预算安排已全部实现「不低于」目标。举报平台信息见人民网《〈教师法〉修订为教师发展赋权强责》。<https://theory.people.com.cn/n1/2021/1214/c40531-32307207.html>\n- 证据等级：A\n- 来源：《中华人民共和国教师法》（1994 年施行，2009 年修正）第二十五条。<https://lzczfy.gxcourt.gov.cn/article/detail/2026/10/id/9516665.shtml> ; 举报平台与「2846 个县全部实现」见人民网。同上。\n- 备注：给 A 是因为条文和举报平台都是可核对这些事实。**要诚实说明「2846 个县全部实现」的口径**：它指的是「根据预算安排」这一层面，即预算上安排了、账面上达标了——**不等于每个教师实际到手的每一笔都到位。** 所以这条和举报平台要一起用：先看预算层面是否达标，再看实际发放是否有差额。\n\n### 2. 教师依法享有的六项权利，逐条读一遍\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=法律 -->\n\n- 成本：不花钱。两分钟。\n- 说人话：**《教师法》第七条列了六项权利，其中至少三项在现实中经常被忽略。** 完整六项是：**（一）进行教育教学活动，开展教育教学改革和实验；（二）从事科学研究、学术交流，参加专业的学术团体，在学术活动中充分发表意见；（三）指导学生的学习和发展，评定学生的品行和学业成绩；（四）按时获取工资报酬，享受国家规定的福利待遇以及寒暑假期的带薪休假；（五）对学校教育教学、管理工作和教育行政部门的工作提出意见和建议，通过教职工代表大会或者其他形式，参与学校的民主管理；（六）参加进修或者其他方式的培训。**\n  最容易忽略的是第（二）项（**学术活动中充分发表意见**）、第（五）项（**民主管理的参与权**）和第（六）项（**参加培训是你的权利，不是学校对你的恩赐**）。\n- 收益：上述六项为《教师法》第七条原文。另据同法第四条：各级人民政府应当采取措施，加强教师的思想政治教育和业务培训，改善教师的工作条件和生活条件，保障教师的合法权益，提高教师的社会地位。\n- 证据等级：A\n- 来源：《中华人民共和国教师法》第四条、第七条。<https://lzczfy.gxcourt.gov.cn/article/detail/2026/10/id/9516665.shtml>\n- 备注：给 A 是因为这是法律条文原文。**这里有一个常被误用的点**：第（六）项「参加进修或者其他方式的培训」是教师的**权利**。所以「学校安排你参加培训」和「学校要求你参加非教育教学培训」是两回事——前者是你有权参加的，后者受第 4 节的限制（2025 年通知明确「除依法依规组织的必要培训外，原则上不得要求教师参加非教育教学培训」）。\n\n### 3. 寒暑假带薪休假是法定权利，不是福利\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=法律 -->\n\n- 成本：不花钱。\n- 说人话：**「享受国家规定的福利待遇以及寒暑假期的带薪休假」写在《教师法》第七条第（四）项里，和「按时获取工资报酬」并列。** 也就是说，在法律的表述里，寒暑假带薪休假和发工资是同级的事项，不是学校「照顾」你。这个定位在实际中有用：**当寒暑假被大量非教学任务和值班占用时，你主张的不是「我想休息」，而是「一项法定权利正在被占用」——** 而第 4 节引述的 2025 年通知恰好明确「法定节假日、周末、寒暑假等无学生在校期间，原则上不安排专任教师值班值守」。\n- 收益：《教师法》第七条第（四）项（法定权利）+ 教育部办公厅 2025 年 11 月通知第四条（对应的行政规定）。\n- 证据等级：A\n- 来源：《中华人民共和国教师法》第七条。<https://lzczfy.gxcourt.gov.cn/article/detail/2026/10/id/9516665.shtml> ; 教育部办公厅通知。<https://www.moe.gov.cn/srcsite/A10/s7058/202511/t20251107_1419596.html>\n- 备注：给 A 是因为法律权利与行政规定都是明文。**要避免一个过度推论**：寒暑假是带薪假期，但「假期里完全不能有任何工作安排」并不是法律的表述。**这一条的准确含义是：假期原则上是你的，占用它需要有依据；而不是「任何占用都违法」。**\n\n### 4. 申诉：教育行政部门应当在三十日内作出处理\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=法律 -->\n\n- 成本：写一份书面申诉材料的时间。\n- 说人话：这是本节最该记住的程序性条款。《教师法》第三十九条规定：**「教师对学校或者其他教育机构侵犯其合法权益的，或者对学校或者其他教育机构作出的处理不服的，可以向教育行政部门提出申诉，教育行政部门应当在接到申诉的三十日内，作出处理。」** 并且：**教师认为当地人民政府有关行政部门侵犯其根据本法规定享有的权利的，可以向同级人民政府或者上一级人民政府有关部门提出申诉。**\n  两句话的含义：**一，申诉是对「处理不服」就可以提的，不以「学校违法」为前提；二，受理机关有三十日的法定办理期限。** 另外，逾期未作处理或久拖不决的，如果申诉内容涉及人身权、财产权等属于行政复议、行政诉讼受案范围的事项，申诉人可以依法提起行政复议或者行政诉讼。\n- 收益：上述内容为《教师法》第三十九条原文及行政权力事项说明。另需注意适用范围：可以向教育行政部门提出申诉的教师，**限于在各级各类学校和其他教育机构中专门从事教育教学工作的教师**。\n- 证据等级：A\n- 来源：《中华人民共和国教师法》第三十九条。<https://gjzwfw.www.gov.cn/fwmh/item/v3/item_1145000000756550652001005002000.do> ; 办理程序与后续救济途径见彰武县教育局权责事项目录。<https://www.zhangwu.gov.cn/zw/file/2023-02-24/16772224910594028e492864db7b62640186824033b341ce.pdf>\n- 备注：给 A 是因为这是法律明文，且「三十日」是可核对的硬数字。**「三十日」是这一条的实用价值所在**——它把「申诉石沉大海」变成了「有期限的等待」。**建议做法**：提交申诉时用可留痕的方式（挂号信、有回执的线上渠道），并记录提交日期，这样三十日从哪天起算是有据可查的。\n\n### 5. 教师法正在修订：但请分清「草案」和「生效法律」\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=法律 -->\n\n\n- 成本：不花钱。只需要在引用时加一句限定语。\n- 说人话：这是一条**提醒，不是权利**。2021 年 11 月 29 日，教育部公布了《中华人民共和国教师法（修订草案）（征求意见稿）》并公开征求意见，共九章 57 条，其中拟规定：**公办中小学教师是国家公职人员**；中小学、幼儿园教师的平均工资收入水平应当不低于或者高于当地公务员的平均工资收入水平（**注意这里加了「收入」二字**，比现行条文口径更宽）；国家建立教师荣誉表彰制度、设立国家教师奖；医疗机构应当对教师提供优先服务。\n  **但这些都还没有生效。** 网上大量文章把这些当成现行规定引用，那是错的。\n- 收益：上述内容出自教育部 2021 年 11 月 29 日《教师法（修订草案）公开征求意见》。<https://www.moe.gov.cn/jyb_xwfb/s5147/202111/t20211130_583360.html>\n- 证据等级：B\n- 来源：同上；解读见人民网《教师法修订草案公开征求意见 有哪些重要变化？》。<https://www.people.cn/n1/2021/1203/c32306-32298871.html>\n- 备注：**给 B 而不是 A，恰恰因为它的效力状态是需要特别小心的**：文件本身（征求意见稿）是真实的、可查的（这部分算 A），但它**不具有法律效力**。凡是引用「公办中小学教师是国家公职人员」「教师看病优先」这类内容时，必须说明「这是 2021 年修订草案的拟规定」。**不确定是否已生效的条条框框，宁可说「拟」，不要说「是」。**\n\n### 6. 教职工代表大会：一个被低估的渠道\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=中 口径=法律 -->\n\n\n- 成本：参加会议、并把诉求写成提案的时间。\n- 说人话：《教师法》第七条第（五）项里写着，教师有权「**通过教职工代表大会或者其他形式，参与学校的民主管理**」。这条在现实中经常被当作形式，但它有两个实际用途：**一，它是把个人诉求变成集体意见的合法通道**（比如课时量计算办法、课后服务安排、班主任津贴标准）；**二，学校的校规校纪制定本身也要经过教职工代表大会讨论**——这一点在《中小学教育惩戒规则（试行）》第五条里也写明了（校规校纪应提交家长委员会、教职工代表大会讨论，经校长办公会议审议通过后施行，并报主管教育部门备案）。\n- 收益：《教师法》第七条第（五）项；《中小学教育惩戒规则（试行）》第五条。后者同时规定：学校制定校规校纪应当广泛征求教职工、学生和学生家长的意见；有条件的可以组织听证。\n- 证据等级：A\n- 来源：《中华人民共和国教师法》第七条。<https://lzczfy.gxcourt.gov.cn/article/detail/2026/10/id/9516665.shtml> ; 《中小学教育惩戒规则（试行）》第五条。<https://www.gov.cn/zhengce/zhengceku/2020-12/29/content_5574650.htm>\n- 备注：给 A 是因为两条都是明文规定。**「校规校纪要经教代会讨论」这一句的实际含义是：一份没有经过这个程序的校规，在程序上是有瑕疵的。** 这一点在涉及惩戒纠纷时可能有用。\n\n### 7. 钱由哪几块构成：知道结构才好核对\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=钱 -->\n\n\n- 成本：不花钱。把工资条按结构拆一遍的时间。\n- 说人话：教师的工资收入通常由几块构成，**搞清楚结构，才能判断「少发了哪一块」**：基本工资（岗位工资＋薪级工资）、绩效工资、津贴补贴（含教龄津贴等），以及按规定享受的福利待遇。**《教师法》第二十六条明确：中小学教师和职业学校教师享受教龄津贴和其他津贴。** 另外，2020 年的中央文件要求「完善中小学教师绩效考核办法，绩效工资分配向班主任倾斜，向教学一线和教育教学效果突出的教师倾斜」，而 2021 年的修订草案（**注意：草案**）进一步写了「绩效工资分配应当坚持多劳多得、优绩优酬，并体现对优秀教师、班主任等特定岗位教师的激励」。\n- 收益：《教师法》第二十五条、第二十六条；绩效工资倾斜要求出自《深化新时代教育评价改革总体方案》第 10 条；修订草案表述出自 2021 年征求意见稿。\n- 证据等级：B\n- 来源：《中华人民共和国教师法》第二十六、二十五条。<https://lzczfy.gxcourt.gov.cn/article/detail/2026/10/id/9516665.shtml> ; 《深化新时代教育评价改革总体方案》。<https://www.gov.cn/zhengce/2020-10/13/content_5551032.htm> ; 修订草案。<https://www.moe.gov.cn/jyb_xwfb/s5147/202111/t20211130_583360.html>\n- 备注：给 B 的原因：**「工资由哪几块构成」在各地各校细则上差异很大，本书不给统一口径。** 上面列的是通行结构，你要用的那版在**本校的工资条和当地教育、人社部门的文件**里。**这一条真正的建议是：把工资条按上述结构拆一遍，确认每一项是否与文件一致。** 这是发现「哪一块没到位」的唯一办法——只看总额是看不出来的。\n","12-用AI提升竞争力.md":"# 第 12 节 用 AI 提升职业竞争力：从哪开始，怎么用得住\n\n**口径**：专业能力\n\n前面十一节讲的是「怎么扛住」，这一节讲的是「怎么往前走」。\n\n先说清楚这一节的态度：**不吹，也不劝。** AI 对教师职业的影响，目前有大规模调查数据、有明确政策，但**「用了 AI 就一定更强」这个结论还没有证据支持**——现有数据大多是教师的自评（「我觉得省了备课时间」），而不是对教学效果或职业竞争力的客观测量。所以这一节会把「有数据的」和「合理推断的」严格分开。\n\n**一句话结论先给你**：目前证据最扎实的收益是**省时间**（尤其是备课与材料准备），而**「提升竞争力」这件事成立与否，取决于你是停留在省时间，还是把它用进了教学流程。**\n\n---\n\n### 1. 先看数据：AI 已经在用了，但大多数人用得还很浅\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=能力 -->\n\n- 成本：不花钱。\n- 说人话：把三组数字放在一起看，你会看到一个很清楚的图景。**使用面已经很广**：覆盖 19 个省 53 万名教师的测评显示，14.77% 的教师每天使用 AI 工具，**仅 3.41% 从未使用过**；85.17% 认为 AI 能帮助拓展教学资源，**81.00% 表示 AI 能节省备课时间**。**但使用深度很浅**：约三分之一的教师停留在浅层辅助（查资料、生成简单素材），另有约三分之一能在某个教学环节针对性使用，**能把 AI 贯穿整个教学流程的不足 20%，能用 AI 创新教学模式的仅约 10%**。\n  所以「AI 已经普及」是真的，「大家都用得好」是假的。**这中间的差距，就是你的机会。**\n- 收益：《2025 年中国中小学教师数字素养年度报告》基于全国 19 个省（区、市）53 万名中小学教师的大样本测评，于 2026 年 5 月世界数字教育大会发布：14.77% 的受访教师每天使用 AI 工具，仅 3.41% 从未使用；85.17% 认为 AI 能帮助拓展教学资源，81.00% 表示 AI 能节省备课时间；使用工具方面，智慧教学平台内嵌 AI 工具使用率 82.68%，通用大模型 76.20%；应用深度方面，约三分之一停留浅层辅助，另有三成多在某个教学环节针对性使用，能贯穿整个教学流程的不足两成，能用 AI 创新教学模式的仅约一成。\n- 证据等级：A\n- 来源：中国青年报《报告称 14.77% 受访教师每天使用人工智能工具》（2026 世界数字教育大会「为未来学校准备教师」平行会议发布）。<https://m.cyol.com/gb/articles/2026-05/12/content_lbNV4RfWRL.html> ; 另见《中国日报》报道。<https://news.zjnu.edu.cn/2026/0513/c8451a554098/page.htm>\n- 备注：给 A 是因为这是 53 万人的大样本测评，规模和代表性都够。**但「81% 表示节省了备课时间」是教师自评，不是客观测量**——没有人掐表对比过「用 AI」和「不用 AI」备课的实际耗时。所以这一条要说成「八成教师主观上觉得省了时间」。**这个区别很重要：自评偏差是这一领域目前最大的证据短板。**\n\n### 2. 政策已经把它变成硬门槛：AI 纳入教师资格考试与认证\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=能力 -->\n\n- 成本：学习与培训的时间。\n- 说人话：这一条不是趋势判断，是已经发生的制度变化，时间线很清楚：**2022 年 11 月**教育部发布《教师数字素养》教育行业标准；**2024 年**《教育强国建设规划纲要（2024—2035 年）》将教育数字化上升为国家战略；**2025 年**教育部办公厅《关于组织实施数字化赋能教师发展行动的通知》提出六大行动，要求推进教师数字素养培训全覆盖，**并首次规定将数字素养纳入中小学教师资格考试的考查范畴**，高校教师资格认定也要将数字素养作为教育教学能力的组成部分进行考查；**2026 年**教育部等五部门印发《「人工智能+教育」行动计划》，明确要**制定教师智能素养标准**，并且——**「将人工智能纳入教师资格考试和认证内容」**。\n  翻成一句大白话：**这已经不是一个「学不学」的兴趣选项，而是从准入端起就被纳入考核的能力项。** 对准备考编、考教师资格的人来说，这是必须准备的内容；对在职教师来说，它会影响培训、测评与后续评价。\n- 收益：上述政策时间线与内容分别出自：教育部《教师数字素养》教育行业标准（2022 年 11 月 30 日发布）；《教育强国建设规划纲要（2024—2035 年）》；教育部办公厅《关于组织实施数字化赋能教师发展行动的通知》（教师厅函〔2025〕）；教育部等五部门《「人工智能+教育」行动计划》（2026 年）。行动计划明确「制定教师智能素养标准，明确教师应具备的人工智能素养能力」「将人工智能纳入教师资格考试和认证内容，在国家及省级教学成果奖中设立智能教育项目」。\n- 证据等级：A\n- 来源：教育部《关于发布〈教师数字素养〉教育行业标准的通知》。<https://zhijiao.eol.cn/2023/02/16/9926375.html> ; 国务院部门信息《教育部实施教师数字素养提升行动》。<https://www.gov.cn/lianbo/bumen/202507/content_7031355.htm> ; 教育部《五部门：将人工智能纳入教师资格考试和认证内容》。<https://www.moe.gov.cn/fbh/live/2026/77927/mtbd/202604/t20260413_1433413.html>\n- 备注：给 A 是因为每一项都有发文主体和时间，可逐一核对。**这里有一条很实际的信息**：行动计划里写的是「围绕课前、课中、课后教育教学全过程，加强智能教学系统应用，**为教师减负增效**」「支撑教师课前备课，辅助教师开展学情分析，支撑**多模态教学资源自动生成**」「辅助教师开展作业管理，推进**智能批改、答疑和辅导**」。**政策文件把 AI 的定位写成了「减负」，这与本书前几节的诉求是同一个方向。**\n\n### 3. AI 最先该接手的四件事：从最省力的地方开始\n\n<!-- 成本标签: 钱=0 时间=中 毅力=些 收益=大 口径=能力 -->\n\n- 成本：学习成本，通常几次上手就够。\n- 说人话：不要一上来就想「用 AI 改变教学」。调查给出的教师实际使用分布，恰好就是最省力的起点：**写教案（50%）、制作 PPT（42%）、检索教学资料（37.7%）**。把这四件事按投入产出排一下，建议的顺序是：\n  **① 教学资料检索与整理**（把一堆杂乱材料整理成结构化的表格或提纲）；\n  **② 出题与组卷**（生成变式题、按知识点组卷，注意必须自己核答案）；\n  **③ 课件与素材的初稿**（让 AI 出结构和文案，你改内容，排版工具你来定）；\n  **④ 教案与学案的结构化**（把你脑子里的流程先转成文字骨架，再填细节）。\n  **共同点是：这四件事都是「有明确对错标准、但要花大量机械时间」的工作**——这正是 AI 的强项。反过来，涉及价值判断、学情判断、和家长沟通的部分，目前不该交给它。\n- 收益：教师 AI 应用场景分布（写教案 50%、制作 PPT 42%、检索教学资料 37.7%）出自《2025 年中小学教师人群应用人工智能情况调研报告》。该调研由中国教育发展战略学会区域教育专业委员会联合学科网及全国 30 余家教育单位完成，调研期 2025 年 6—9 月，回收有效样本 68792 份。报告同时列出教师使用 AI 遭遇的三类突出难题：反复切换工具、生成内容有偏差或专业度不足需额外修正、受「提示词」制约。\n- 证据等级：C\n- 来源：《2025 年中小学教师人群应用人工智能情况调研报告》。<https://c.m.163.com/news/a/KCBBRDO10550CBNY.html>\n- 备注：给 C 的原因：**使用分布是调查数据（B 级），但「按这个顺序上手更有效」是我给的建议，没有对照实验支持。** 报告中另一个数字很值得注意：**61.19% 的教师需要可直接复用的案例模板，53.45% 希望获取针对备课、作业批改等具体痛点的应用**——也就是说，多数人要的不是原理，是「拿来就能用的那个东西」。**所以这一节后面几条都尽量给具体做法而不是原则。**\n\n### 4. 提示词不是玄学：把需求写成「角色＋任务＋约束＋样例」\n\n<!-- 成本标签: 钱=0 时间=少 毅力=些 收益=中 口径=能力 -->\n\n- 成本：第一次多花十分钟，之后可复用。\n- 说人话：调查里「受提示词制约、不熟悉交互逻辑导致需求表达不畅」是教师的三大困扰之一。**解决办法不是学玄学，是把要求写全**。一个够用的结构是四段：\n  **角色**——「你是一位有十年经验的初中数学老师」（让输出的语气和深度对齐）；\n  **任务**——「为『一元二次方程的应用』出 6 道题」（明确动作和数量）；\n  **约束**——「难度按教材例题水平；不用需要计算器的数字；每题给出解题步骤和易错点；不要出现人名」（约束越具体，返工越少）；\n  **样例**——贴一道你满意的现有题目作为格式参照（**这一步最省力也最有效**）。\n  最后一定要加一句：**「如果有不确定的地方，先问我，不要自己编。」**\n- 收益：调查显示「受提示词制约、教师不熟悉交互逻辑导致需求表达不畅」是教师使用 AI 的三类突出难题之一；同时 61.19% 的教师需要可直接复用的案例模板。\n- 证据等级：C\n- 来源：《2025 年中小学教师人群应用人工智能情况调研报告》。<https://c.m.163.com/news/a/KCBBRDO10550CBNY.html>\n- 备注：给 C 的原因：**「提示词有结构」在从业者中有广泛共识，但缺少严格对照研究证明某种结构更优**，而且不同模型的偏好差异很大。**所以这一条按「试了不亏」来用，别当规范。** 「如果有不确定的地方先问我」这一句是其中最实用的——它能显著减少 AI 编造内容的情况。\n\n### 5. 别让 AI 写你不懂的东西\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=大 口径=能力 -->\n\n\n- 成本：不花钱。但要接受「先只用能判断的」这个限制。\n- 说人话：这是本节唯一一条**限制**，也是最重要的一条。原因不在道德，在于**风险归属**：AI 生成的内容如果出错，承担责任的是署你名字的那个人。所以有一条很简单的判断标准：**AI 写出来的东西，你有没有能力判断它对不对？** 能判断，就用它省时间；不能判断，就先别用——因为你不是在省时间，你是在把审核成本转嫁给未来的自己。\n  这一点在学生相关的场景里尤其硬：**成绩、评语、学科内容的准确性，出错就是教学事故。** 另外，涉及学生个人信息（姓名、身份证号、成绩、家庭情况）的内容，**不要输入到公用的 AI 工具里**。\n- 收益：教师对 AI 的伦理担忧中最集中的三类是：**学生过度依赖、数据隐私泄露、信息误导**；近半数教师呼吁出台 AI 应用规章与伦理准则。地方实践已有先例：深圳市福田区构建了包含 43 个观测点的教师 AI 素养框架，并出台指南**明确 AI 在教育中鼓励、限制与禁止的使用场景**。\n- 证据等级：D\n- 来源：《2025 年中国中小学教师数字素养年度报告》伦理担忧部分。<https://m.cyol.com/gb/articles/2026-05/12/content_lbNV4RfWRL.html> ; 福田区做法见《中国日报》报道。<https://news.zjnu.edu.cn/2026/0513/c8451a554098/page.htm>\n- 备注：给 D 的原因：**「伦理担忧」的调查数据是实的（B 级），「别写你不懂的东西」这条操作原则是我给的判断，没有规范文件直接这么写**（福田区的框架属于地方探索）。之所以标 D 而不是不写，是因为它对应的是**不可逆风险**：一次内容错误可能影响一个学生的评价记录。\n\n### 6. 用 AI 做学情分析与出题：从「凭经验」到「看数据」\n\n<!-- 成本标签: 钱=0 时间=中 毅力=是 收益=中 口径=能力 -->\n\n\n- 成本：整理题目—知识点对应表、导出并核对数据的时间。\n- 说人话：这是「从省时间走向提竞争力」的那一步。省时间的用法是把 AI 当打字机；**提竞争力的用法是把它当分析工具**——比如：把一次测验的错题按知识点归类（你提供题目—知识点对应表，让 AI 统计），找出全班集中出错的三到五个知识点；把学生的答题记录整理成每人每知识点的掌握情况表；据此调整下节课的重点。\n  **为什么这一步更值钱**：政策文件已经把它写进了「赋能教师教学」的具体任务里（「辅助教师开展学情分析」「利用智能技术分析课堂教学行为，开展人工智能循证教研实践」）。**当一项能力被写进政策任务，它就从「加分项」变成了「基本项」。**\n- 收益：《「人工智能+教育」行动计划》在「利用人工智能赋能教师教学」部分明确：围绕课前、课中、课后教育教学全过程，加强智能教学系统应用，为教师减负增效；**支撑教师课前备课，辅助教师开展学情分析，支撑多模态教学资源自动生成、方案优化和教学过程模拟，实现人机共创备课**；辅助教师开展作业管理，推进智能批改、答疑和辅导；**利用智能技术分析课堂教学行为，开展人工智能循证教研实践**。\n- 证据等级：C\n- 来源：教育部《五部门：将人工智能纳入教师资格考试和认证内容》（《「人工智能+教育」行动计划》内容）。<https://www.moe.gov.cn/fbh/live/2026/77927/mtbd/202604/t20260413_1433413.html>\n- 备注：给 C 的原因：**政策要求是真实的（A 级），但「个人怎么落地做学情分析」这一步没有现成规范，各校平台差异极大。** 需要提醒一个现实约束：**如果你所在的学校有统一的智慧教学平台，应当优先用平台内嵌的功能**——调查显示平台内嵌 AI 工具使用率（82.68%）高于通用大模型（76.20%），用平台还有数据不出校的好处。\n\n### 7. 「不用 AI 的教师会被取代」这句话，要拆开看\n\n<!-- 成本标签: 钱=0 时间=少 毅力=否 收益=中 口径=能力 -->\n\n\n- 成本：不花钱。把焦虑和行动分开。\n- 说人话：这句话在会议和培训里被反复引用。**把它拆成两半，一半有依据，一半没有。**\n  **有依据的一半**：AI 已经进入教师资格考试与认证（本节第 2 条），意味着「会用」正在变成准入要求；同时数据显示只有约 20% 的教师把 AI 用进了全流程、约 10% 用它改变了教学方式——**在这两项上领先，确实是可衡量的差异。**\n  **没有依据的一半**：「被取代」这个说法本身。目前没有任何研究支持「教师岗位会因 AI 而被大规模替代」这一预测。**教育政策的方向恰好相反**——行动计划把 AI 定位成「为教师减负增效」的工具，而不是替代者。\n  所以更准确的表述是：**「会用 AI 的教师，和不会用的教师，在效率上的差距会拉大」**，而不是「后者会被淘汰」。前者是数据支持的判断，后者是口号。\n- 收益：《中国教师生成式人工智能应用报告（2026）》（教育部教师工作司指导、教育部教育技术与资源发展中心组编）基于全国 30 个省（区、市）8.6 万名教师调查数据与 430 万字文本材料，显示：**92.3% 的教师倾向于将人工智能融入课堂教学，96.1% 的教师正主动学习更多 AI 工具**；同时 **86% 的教师深切担忧学生过度依赖 AI 会削弱独立思考能力，69.4% 的教师感知到自身角色正在发生深刻变化**。\n- 证据等级：B\n- 来源：科普中国《AI 冲进课堂，老师真的会被取代吗？》（引述《中国教师生成式人工智能应用报告（2026）》）。<https://www.kepuchina.cn/article/articleinfo?ar_id=732433&business_type=100&classify=0>\n- 备注：给 B 的原因：**调查数据是实的、规模够大（8.6 万人，30 个省），但「取代与否」本身无法用调查回答**——那是一个预测，不是一个可测量的事实。**这一条放在最后，是想把它当收尾**：这一节的九成内容都是「可以试试」，但请把「焦虑」和「行动」分开——**焦虑不是行动，焦虑只是焦虑。** 从前面的本节第 3 条开始做，比反复讨论「会不会被取代」有用。\n"};
+</script>
+<script>
+const FILES = [
+  "01-先看几组数字.md",
+  "02-身体上的信号.md",
+  "03-心理与撑不住的时候.md",
+  "04-时间与非教学负担.md",
+  "05-学生安全与惩戒边界.md",
+  "06-家长投诉与不实举报.md",
+  "07-中小学的升学与评价.md",
+  "08-大学的非升即走.md",
+  "09-职称与晋升.md",
+  "10-平台不足怎么办.md",
+  "11-钱编制与维权.md",
+  "12-用AI提升竞争力.md"
+];
+
+// 学段归属：本指南最重要的导航维度。「全学段」的章节在任何学段筛选下都会显示。
+const SEGMENT = {1:"全学段",2:"全学段",3:"全学段",4:"中小学",5:"中小学",6:"中小学",7:"中小学",8:"高校",9:"全学段",10:"高校",11:"全学段",12:"全学段"};
+
+let ENTRIES = [];
+let SECTIONS = [];
+
+function parseBook(text, fileName, secIndex, secTitle){
+  const out = [];
+  const re = /^###\s+(\d+)\.\s+(.+?)\s*$/gm;
+  const marks = [];
+  let m;
+  while((m = re.exec(text)) !== null){
+    marks.push({no:+m[1], title:m[2], bodyStart:re.lastIndex});
+  }
+  marks.forEach((mk,i)=>{
+    const nextIdx = (i+1<marks.length) ? text.indexOf("\n### ", mk.bodyStart) : -1;
+    const seg = text.slice(mk.bodyStart, nextIdx === -1 ? text.length : nextIdx);
+    const tagM = seg.match(/<!--\s*成本标签:\s*([^>]*?)-->/);
+    const tags = {};
+    if(tagM){
+      tagM[1].split(/\s+/).forEach(kv=>{
+        const p = kv.split("=");
+        if(p.length===2) tags[p[0]] = p[1];
+      });
+    }
+    const fields = {};
+    seg.split("\n").forEach(line=>{
+      const fm = line.match(/^-\s*([^\s:：][^：]*?)：\s*([\s\S]*)$/);
+      if(fm){
+        const k = fm[1].trim();
+        if(!fields[k]) fields[k] = fm[2].trim();
+      }
+    });
+    const grade = fields["证据等级"] || "未标注";
+    out.push({
+      id: secIndex + "-" + mk.no,
+      no: mk.no,
+      title: mk.title,
+      sec: secIndex,
+      secTitle: secTitle,
+      grade: grade,
+      gkey: (grade.trim()[0] || "?").toUpperCase(),
+      cost: fields["成本"] || "",
+      plain: fields["说人话"] || "",
+      benefit: fields["收益"] || "",
+      path: fields["路径"] || "",
+      source: fields["来源"] || "",
+      note: fields["备注"] || "",
+      tags: tags,
+      hay: (mk.title + " " + Object.values(fields).join(" ")).toLowerCase()
+    });
+  });
+  return out;
+}
+
+function splitDoc(text){
+  const hm = text.match(/^#\s+第\s*\d+\s*节\s+(.+?)\s*$/m);
+  const title = hm ? hm[1] : "";
+  const start = hm ? hm.index + hm[0].length : 0;
+  const cut = text.indexOf("\n### ", start);
+  let pre = text.slice(start, cut === -1 ? text.length : cut);
+  pre = pre.split("\n").filter(l => !/^\s*-{3,}\s*$/.test(l)).join("\n").trim();
+  return {title, pre};
+}
+
+async function load(){
+  if(typeof EMBEDDED_BOOK !== "undefined"){
+    FILES.forEach((f,i)=>{
+      const text = EMBEDDED_BOOK[f];
+      if(text === undefined) return;
+      const {title, pre} = splitDoc(text);
+      entriesPush(text, f, i+1, title || f.replace(/^\d+-|\.md$/g,""), pre);
+    });
+    return {failed: []};
+  }
+  const failed = [];
+  const results = await Promise.all(FILES.map(async (f,i)=>{
+    for(let attempt = 0; attempt < 2; attempt++){
+      try{
+        const r = await fetch("./book/" + encodeURIComponent(f), {cache:"no-store"});
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        return {f, i:i+1, text: await r.text()};
+      }catch(e){
+        if(attempt === 1) failed.push(f + "（" + e.message + "）");
+      }
+    }
+    return null;
+  }));
+  results.filter(Boolean).forEach(r=>{
+    const {title, pre} = splitDoc(r.text);
+    entriesPush(r.text, r.f, r.i, title || r.f.replace(/^\d+-|\.md$/g,""), pre);
+  });
+  return {failed};
+}
+
+function entriesPush(text, file, idx, title, pre){
+  const es = parseBook(text, file, idx, title);
+  ENTRIES = ENTRIES.concat(es);
+  SECTIONS.push({sec:idx, title:title, pre:pre, count:es.length});
+}
+
+/* ---------- 渲染工具 ---------- */
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function rich(s, selfSec){
+  let h = esc(s);
+  h = h.replace(/&lt;(https?:\/\/[^<>\s]+)&gt;/g, (a,u)=>'<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>');
+  h = h.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  h = h.replace(/(原书|《高性价比人生指南》)\s*第\s*(\d+)\s*节第\s*(\d+)\s*条/g,
+        (a,who,sec,no)=>'<span class="refext">'+who+' 第'+sec+'节第'+no+'条（不在本指南内）</span>');
+  h = h.replace(/第\s*(\d+)\s*节第\s*(\d+)\s*条/g,
+        (a,sec,no)=>'<a class="reflink" data-sec="'+sec+'" data-no="'+no+'">第'+sec+'节第'+no+'条</a>');
+  h = h.replace(/本节第\s*(\d+)\s*条/g,
+        (a,no)=>'<a class="reflink" data-sec="'+selfSec+'" data-no="'+no+'">本节第'+no+'条</a>');
+  return h;
+}
+function preRich(s){
+  const lines = s.split("\n").map(x=>x.trim()).filter(Boolean);
+  return lines.map(l=>{
+    const lm = l.match(/^\*\*口径\*\*：\s*(.+)$/);
+    if(lm) return '<p><span class="lens">口径</span>'+rich(lm[1])+'</p>';
+    return '<p>'+rich(l)+'</p>';
+  }).join("");
+}
+
+const S = {q:"", seg:new Set(), grade:new Set(), money:new Set(), time:new Set(), grit:new Set(), ben:new Set(), kou:new Set()};
+const GRADE_LABEL = {A:"A 硬证据", B:"B 观察性数据", C:"C 规定或公开数据", D:"D 无直接证据"};
+const KOUMAP = {健康:"身体健康", 心理:"心理与情绪", 时间:"时间与精力", 钱:"收入与待遇", 职业:"职业发展", 法律:"法律与权益", 能力:"专业能力"};
+const MONEY_LABEL = {0:"不花钱", "少":"花一点", "中":"花中等", "大":"花大钱"};
+const TIME_LABEL  = {0:"不花时间", "少":"花一点", "中":"花中等", "大":"花很多"};
+const GRIT_LABEL  = {"否":"不要毅力", "些":"要一点毅力", "是":"要毅力"};
+const BEN_LABEL   = {"负":"负收益", "小":"收益小", "中":"收益中", "大":"收益大"};
+
+function chipsHTML(dim, map, cls){
+  return Object.keys(map).map(v=>'<button class="chip '+(cls||"")+'" data-dim="'+dim+'" data-v="'+v+'" aria-pressed="false">'+map[v]+'</button>').join("");
+}
+
+function initSide(){
+  document.getElementById("fseg").innerHTML = ["中小学","高校"].map(v=>'<button class="chip" data-dim="seg" data-v="'+v+'" aria-pressed="false">'+v+'</button>').join("");
+  document.getElementById("fgrade").innerHTML = ["A","B","C","D"]
+    .map(g=>'<button class="chip g'+g+'" data-dim="grade" data-v="'+g+'" aria-pressed="false">'+GRADE_LABEL[g]+'</button>').join("");
+  document.getElementById("fmoney").innerHTML = chipsHTML("money", MONEY_LABEL);
+  document.getElementById("ftime").innerHTML  = chipsHTML("time",  TIME_LABEL);
+  document.getElementById("fgrit").innerHTML  = chipsHTML("grit",  GRIT_LABEL);
+  document.getElementById("fben").innerHTML   = chipsHTML("ben",   BEN_LABEL);
+  const kous = [...new Set(ENTRIES.map(e=>e.tags["口径"]).filter(Boolean))];
+  const km = {}; kous.forEach(k=>km[k] = KOUMAP[k] || k);
+  document.getElementById("fkou").innerHTML = chipsHTML("kou", km);
+  renderToc();
+}
+
+function renderToc(){
+  const toc = document.getElementById("toc");
+  if(!toc) return;
+  const list = ENTRIES.filter(match);
+  const cnt = {};
+  list.forEach(e=>{ cnt[e.sec] = (cnt[e.sec]||0)+1; });
+  toc.innerHTML = SECTIONS.map(s=>{
+    const c = cnt[s.sec] || 0;
+    const sub = list.filter(e=>e.sec===s.sec);
+    return '<button class="toc-row'+(c?"":" dim")+'" data-sec="'+s.sec+'">'
+      + '<span class="no">'+String(s.sec).padStart(2,"0")+'</span>'
+      + '<span class="tl">'+esc(s.title)+'</span>'
+      + '<span class="ct">'+c+'</span>'
+      + '<span class="cv">›</span>'
+      + '</button>'
+      + '<div class="toc-sub" data-sub="'+s.sec+'">'
+      + (sub.length
+          ? sub.map(e=>'<a data-sec="'+e.sec+'" data-no="'+e.no+'">'+esc(e.title)+'</a>').join("")
+          : '<div class="toc-empty">这一节没有命中的条目</div>')
+      + '</div>';
+  }).join("");
+  syncSub();
+}
+
+function syncSub(){
+  const active = document.querySelector(".toc-sub.open");
+  if(active) active.classList.remove("open");
+  const row = document.querySelector(".toc-row.on");
+  if(row){
+    const sub = document.querySelector('.toc-sub[data-sub="'+row.dataset.sec+'"]');
+    if(sub && sub.querySelector("a")) sub.classList.add("open");
+  }
+}
+
+function match(e){
+  if(S.seg.size){
+    const seg = SEGMENT[e.sec] || "全学段";
+    if(seg !== "全学段" && !S.seg.has(seg)) return false;
+  }
+  if(S.q){
+    const q = S.q.toLowerCase();
+    if(e.hay.indexOf(q) === -1) return false;
+  }
+  if(S.grade.size && !S.grade.has(e.gkey)) return false;
+  if(S.money.size && !S.money.has(e.tags["钱"])) return false;
+  if(S.time.size && !S.time.has(e.tags["时间"])) return false;
+  if(S.grit.size && !S.grit.has(e.tags["毅力"])) return false;
+  if(S.ben.size && !S.ben.has(e.tags["收益"])) return false;
+  if(S.kou.size && !S.kou.has(e.tags["口径"])) return false;
+  return true;
+}
+
+function entHTML(e){
+  const tags = [];
+  tags.push('<span class="tg tg'+e.gkey+'">'+esc(GRADE_LABEL[e.gkey] || e.grade)+'</span>');
+  const t = e.tags, mono = [];
+  if(t["钱"]!==undefined) mono.push("钱="+t["钱"]);
+  if(t["时间"]!==undefined) mono.push("时间="+t["时间"]);
+  if(t["毅力"]!==undefined) mono.push("毅力="+t["毅力"]);
+  if(t["收益"]!==undefined) mono.push("收益="+t["收益"]);
+  if(t["口径"]!==undefined) mono.push("口径="+t["口径"]);
+  if(mono.length) tags.push('<span class="tg tgx">'+esc(mono.join(" "))+'</span>');
+
+  const body = [];
+  if(e.cost) body.push('<div class="fld"><span class="k">成本</span><span class="v">'+rich(e.cost,e.sec)+'</span></div>');
+  if(e.benefit) body.push('<div class="fld"><span class="k">收益</span><span class="v">'+rich(e.benefit,e.sec)+'</span></div>');
+  if(e.path) body.push('<div class="fld path"><span class="k">路径</span><span class="v">'+rich(e.path,e.sec)+'</span></div>');
+  if(e.note) body.push('<div class="fld note"><span class="k">备注</span><span class="v">'+rich(e.note,e.sec)+'</span></div>');
+  const srcFold = e.source
+    ? '<details class="src-fold"><summary><span class="k">来源</span>展开出处</summary>'
+      + '<div class="fld src"><span class="k">来源</span><span class="v">'+rich(e.source,e.sec)+'</span></div></details>'
+    : "";
+
+  return '<article class="ent" id="e-'+e.id+'" data-sec="'+e.sec+'" data-no="'+e.no+'">'
+    + '<div class="ent-h"><span class="ent-no">'+e.sec+'-'+e.no+'</span><h3 class="ent-t">'+esc(e.title)+'</h3></div>'
+    + '<div class="ent-tag">'+tags.join("")+'</div>'
+    + '<p class="ent-plain">'+rich(e.plain,e.sec)+'</p>'
+    + '<button class="ent-btn">展开成本、收益、备注与来源</button>'
+    + '<div class="ent-body">'+body.join("")+srcFold+'</div>'
+    + '</article>';
+}
+
+function render(){
+  const list = ENTRIES.filter(match);
+  const g = {A:0,B:0,C:0,D:0,other:0};
+  list.forEach(e=>{ if(g[e.gkey]!==undefined) g[e.gkey]++; else g.other++; });
+
+  const live = document.getElementById("live");
+  if(list.length === ENTRIES.length){
+    live.className = "stat-live";
+  } else {
+    live.className = "stat-live show";
+    live.innerHTML = "当前筛选命中 <b>"+list.length+"</b> / "+ENTRIES.length+" 条 &nbsp;·&nbsp; 其中 A "+g.A+" · B "+g.B+" · C "+g.C+" · D "+g.D;
+  }
+
+  const box = document.getElementById("list");
+  document.getElementById("empty").hidden = list.length > 0;
+  document.getElementById("status").style.display = "none";
+
+  const groups = new Map();
+  list.forEach(e=>{
+    if(!groups.has(e.sec)) groups.set(e.sec, []);
+    groups.get(e.sec).push(e);
+  });
+
+  const html = [];
+  SECTIONS.forEach(s=>{
+    const es = groups.get(s.sec);
+    if(!es) return;
+    html.push('<section class="sec" id="s-'+s.sec+'">');
+    html.push('<div class="sec-h"><span class="no">第 '+s.sec+' 节</span><h2>'+esc(s.title)+'</h2><span class="seg">'+(SEGMENT[s.sec]||"全学段")+'</span><span class="n">'+es.length+' 条</span></div>');
+    if(s.pre) html.push('<div class="sec-pre">'+preRich(s.pre)+'</div>');
+    es.forEach(e=>html.push(entHTML(e)));
+    html.push('</section>');
+  });
+
+  box.innerHTML = html.join("");
+  renderToc();
+  spy();
+}
+
+/* ---------- 交互 ---------- */
+function clearAll(){
+  ["seg","grade","money","time","grit","ben","kou"].forEach(k=>S[k].clear());
+  S.q = ""; document.getElementById("q").value = "";
+  document.getElementById("searchwrap").classList.remove("has");
+  document.querySelectorAll('.chip[aria-pressed="true"]').forEach(c=>c.setAttribute("aria-pressed","false"));
+  clearPresetUI();
+}
+function clearPresetUI(){
+  document.querySelectorAll(".pre button[data-p]").forEach(b=>b.classList.remove("on"));
+}
+
+function scrollToSec(sec){
+  const el = document.getElementById("s-"+sec);
+  if(el) window.scrollTo({top: el.getBoundingClientRect().top + window.pageYOffset - 72, behavior:"smooth"});
+}
+
+function jump(sec, no){
+  let el = document.getElementById("e-"+sec+"-"+no);
+  if(!el){
+    clearAll(); render();
+    el = document.getElementById("e-"+sec+"-"+no);
+  }
+  if(!el) return;
+  el.classList.add("open");
+  const btn = el.querySelector(".ent-btn");
+  if(btn) btn.textContent = "收起";
+  document.querySelectorAll(".ent.hi").forEach(x=>x.classList.remove("hi"));
+  el.classList.add("hi");
+  window.scrollTo({top: el.getBoundingClientRect().top + window.pageYOffset - 82, behavior:"smooth"});
+  setTimeout(()=>el.classList.remove("hi"), 2600);
+  const sub = document.querySelector('.toc-sub[data-sub="'+sec+'"] a[data-no="'+no+'"]');
+  if(sub) sub.classList.add("on");
+}
+
+let spyLock = 0;
+function spy(){
+  const rows = [...document.querySelectorAll(".toc-row")];
+  const secs = [...document.querySelectorAll(".sec")];
+  if(!secs.length) return;
+  const y = window.pageYOffset + 110;
+  let cur = secs[0].id;
+  secs.forEach(s=>{ if(s.getBoundingClientRect().top + window.pageYOffset <= y) cur = s.id; });
+  const secNo = cur.replace("s-","");
+  rows.forEach(r=>r.classList.toggle("on", r.dataset.sec === secNo));
+  syncSub();
+
+  const ents = [...document.querySelectorAll(".ent")];
+  let curE = null;
+  ents.forEach(e=>{ if(e.getBoundingClientRect().top + window.pageYOffset <= y) curE = e.id; });
+  document.querySelectorAll(".toc-sub a").forEach(a=>{
+    a.classList.toggle("on", curE !== null && a.dataset.sec + "-" + a.dataset.no === curE.replace("e-",""));
+  });
+
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById("prog").style.width = (h > 0 ? Math.min(100, window.pageYOffset / h * 100) : 0) + "%";
+  document.getElementById("top").classList.toggle("show", window.pageYOffset > 700);
+}
+
+document.addEventListener("click", ev=>{
+  const chip = ev.target.closest(".chip");
+  if(chip){
+    const k = chip.dataset.dim, v = chip.dataset.v;
+    if(!S[k]) return;
+    S[k].has(v) ? S[k].delete(v) : S[k].add(v);
+    chip.setAttribute("aria-pressed", S[k].has(v) ? "true" : "false");
+    clearPresetUI();
+    render(); spy(); return;
+  }
+  const pre = ev.target.closest("#presets button[data-p]");
+  if(pre){
+    clearAll();
+    const p = pre.dataset.p;
+    if(p==="free"){ S.money.add("0"); S.grit.add("否"); }
+    if(p==="hard") S.grade.add("A");
+    if(p==="edge") S.grade.add("D");
+    if(p==="law")  S.kou.add("法律");
+    document.querySelectorAll('.chip[data-dim="grade"]').forEach(c=>c.setAttribute("aria-pressed", S.grade.has(c.dataset.v)?"true":"false"));
+    document.querySelectorAll('.chip[data-dim="money"]').forEach(c=>c.setAttribute("aria-pressed", S.money.has(c.dataset.v)?"true":"false"));
+    document.querySelectorAll('.chip[data-dim="time"]').forEach(c=>c.setAttribute("aria-pressed", S.time.has(c.dataset.v)?"true":"false"));
+    document.querySelectorAll('.chip[data-dim="grit"]').forEach(c=>c.setAttribute("aria-pressed", S.grit.has(c.dataset.v)?"true":"false"));
+    document.querySelectorAll('.chip[data-dim="ben"]').forEach(c=>c.setAttribute("aria-pressed", S.ben.has(c.dataset.v)?"true":"false"));
+    document.querySelectorAll('.chip[data-dim="kou"]').forEach(c=>c.setAttribute("aria-pressed", S.kou.has(c.dataset.v)?"true":"false"));
+    document.querySelectorAll(".pre button[data-p]").forEach(b=>b.classList.remove("on"));
+    pre.classList.add("on");
+    render(); spy(); return;
+  }
+  const row = ev.target.closest(".toc-row");
+  if(row){
+    const sec = row.dataset.sec;
+    const sub = document.querySelector('.toc-sub[data-sub="'+sec+'"]');
+    const isOpen = sub && sub.classList.contains("open") && row.classList.contains("on");
+    if(isOpen){ sub.classList.remove("open"); row.classList.remove("on"); return; }
+    document.querySelectorAll(".toc-sub.open").forEach(x=>x.classList.remove("open"));
+    document.querySelectorAll(".toc-row.on").forEach(x=>x.classList.remove("on"));
+    row.classList.add("on");
+    if(sub) sub.classList.add("open");
+    scrollToSec(sec);
+    document.getElementById("side").classList.remove("open");
+    return;
+  }
+  const suba = ev.target.closest(".toc-sub a");
+  if(suba){ jump(suba.dataset.sec, suba.dataset.no); document.getElementById("side").classList.remove("open"); return; }
+
+  const link = ev.target.closest(".reflink");
+  if(link){ jump(link.dataset.sec, link.dataset.no); return; }
+
+  const btn = ev.target.closest(".ent-btn");
+  if(btn){
+    const card = btn.closest(".ent");
+    card.classList.toggle("open");
+    btn.textContent = card.classList.contains("open") ? "收起" : "展开成本、收益、备注与来源";
+    return;
+  }
+  if(ev.target.id === "rst"){ clearAll(); render(); spy(); return; }
+  if(ev.target.id === "reset2"){ clearAll(); render(); spy(); return; }
+  if(ev.target.id === "top"){ window.scrollTo({top:0, behavior:"smooth"}); return; }
+  if(ev.target.id === "toggle"){ document.getElementById("side").classList.toggle("open"); return; }
+  if(ev.target.id === "mask"){ document.getElementById("side").classList.remove("open"); return; }
+  if(ev.target.id === "qclr"){
+    S.q=""; document.getElementById("q").value="";
+    document.getElementById("searchwrap").classList.remove("has");
+    clearPresetUI();
+    render(); spy(); return;
+  }
+});
+
+document.addEventListener("input", ev=>{
+  if(ev.target.id !== "q") return;
+  S.q = ev.target.value.trim();
+  document.getElementById("searchwrap").classList.toggle("has", S.q.length > 0);
+  clearPresetUI();
+  render(); spy();
+});
+
+window.addEventListener("keydown", ev=>{
+  if((ev.metaKey || ev.ctrlKey) && ev.key === "k"){
+    ev.preventDefault(); document.getElementById("q").focus();
+  }
+  if(ev.key === "Escape"){ document.getElementById("side").classList.remove("open"); }
+});
+
+let raf = 0;
+window.addEventListener("scroll", ()=>{
+  if(raf) return;
+  raf = requestAnimationFrame(()=>{ raf = 0; spy(); });
+}, {passive:true});
+window.addEventListener("resize", ()=>{ raf = 0; spy(); });
+
+(async function(){
+  let res;
+  try{ res = await load(); }
+  catch(err){ res = {failed: ["未预期的错误：" + err.message]}; }
+
+  if(!ENTRIES.length){
+    const local = location.protocol === "file:";
+    document.getElementById("status").innerHTML = local
+      ? '<b>正文读取失败——你像是把 index.html 直接双击打开的。</b><br><br>'
+        + '浏览器不允许网页读取本地文件，所以这里会是空的。三种解法，任选一种：<br>'
+        + '1. 在项目目录下运行 <code>python3 -m http.server 8000</code>，再访问 <code>http://localhost:8000/</code><br>'
+        + '2. 直接打开 <b>dist/ 目录下的离线单文件版</b>，那个双击就能用<br>'
+        + '3. 把整个项目目录丢给任意静态服务器'
+      : '<b>正文一条都没读到。</b><br><br>请确认 <code>book/</code> 目录和 index.html 在同一个目录下，且文件名没有被改过。<br>'
+        + '如果是在微信里打开的，请用离线单文件版。';
+    return;
+  }
+
+  const g = {A:0,B:0,C:0,D:0};
+  ENTRIES.forEach(e=>{ if(g[e.gkey]!==undefined) g[e.gkey]++; });
+  const law = ENTRIES.filter(e=>e.tags["口径"] === "法律").length;
+  const segCount = (want) => SECTIONS.filter(s=>SEGMENT[s.sec]===want).length;
+  document.getElementById("meta").innerHTML = [
+    ["条目", ENTRIES.length], ["章节", SECTIONS.length],
+    ["A 硬证据", g.A], ["B 观察性", g.B], ["C 规定", g.C], ["D 无直接证据", g.D],
+    ["法律与权益", law], ["中小学专章", segCount("中小学")], ["高校专章", segCount("高校")]
+  ].map(x=>'<div><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join("");
+
+  initSide();
+  render();
+  spy();
+
+  if(res.failed && res.failed.length){
+    const w = document.createElement("div");
+    w.className = "warn";
+    w.innerHTML = '<b>有 '+res.failed.length+' 节没读到，下面显示的条目不完整。</b>'
+      + '<br>' + res.failed.map(esc).join("<br>");
+    document.getElementById("list").insertBefore(w, document.getElementById("list").firstChild);
+  }
+})();
+</script>
+</body>
+</html>
